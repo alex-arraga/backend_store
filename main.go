@@ -1,14 +1,17 @@
 package main
 
 import (
+	"log"
 	"net/http"
 	"time"
 )
 
 func main() {
-
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte("Hola mundo"))
+		_, err := w.Write([]byte("Hola mundo"))
+		if err != nil {
+			log.Println("Error writing response")
+		}
 	})
 
 	s := http.Server{
@@ -18,5 +21,8 @@ func main() {
 		IdleTimeout:  60 * time.Second,
 	}
 
-	s.ListenAndServe()
+	err := s.ListenAndServe()
+	if err != nil {
+		log.Fatal("Server failed")
+	}
 }

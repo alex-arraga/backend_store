@@ -1,0 +1,28 @@
+run:
+  timeout: 5m
+linters: 
+  disable-all: true
+  enable:
+  - gosimple
+  - gofmt
+  - gci
+  - nilerr
+  - errcheck
+  - staticcheck
+  - govet
+  - whitespace
+  - ineffassign
+  - unused
+  - unparam
+  - usestdlibvars
+  - bodyclose
+  - zerologlint
+linters-settings:
+  gci:
+    skip-generated: false
+    custom-order: true
+    sections:
+      - standard
+      - default
+      - prefix(github.com/alex-arraga)
+      - prefix(github.com/alex-arraga/backend_store)
