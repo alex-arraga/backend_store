@@ -3,21 +3,20 @@ package main
 import (
 	"log"
 	"net/http"
-	"os"
 	"time"
 
 	"github.com/google/uuid"
-	"github.com/joho/godotenv"
 
+	"github.com/alex-arraga/backend_store/config"
 	"github.com/alex-arraga/backend_store/database/connection"
 	"github.com/alex-arraga/backend_store/database/migrations"
 	"github.com/alex-arraga/backend_store/models"
 )
 
 func main() {
-	err := godotenv.Load(".env")
+	port, dbConn, err := config.LoadConfig()
 	if err != nil {
-		log.Fatalf("Error loading .env: %d", err)
+		log.Fatalf("error loading config: %d", err)
 	}
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
@@ -27,10 +26,8 @@ func main() {
 		}
 	})
 
-	port := os.Getenv("PORT")
-
 	// Database connection
-	db, err := connection.ConnectDatabase()
+	db, err := connection.ConnectDatabase(dbConn)
 	if err != nil {
 		log.Fatalf("Database error: %d", err)
 	}
@@ -41,8 +38,8 @@ func main() {
 	// Example: create a user
 	user := models.User{
 		ID:    uuid.New(),
-		Name:  "John Doe",
-		Email: "johndoe@example.com",
+		Name:  "John",
+		Email: "john@example.com",
 	}
 
 	if result := db.Create(&user); result.Error != nil {

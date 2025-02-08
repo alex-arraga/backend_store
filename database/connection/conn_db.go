@@ -2,7 +2,6 @@ package connection
 
 import (
 	"log"
-	"os"
 	"time"
 
 	"gorm.io/driver/postgres"
@@ -12,10 +11,8 @@ import (
 
 var DB *gorm.DB
 
-func ConnectDatabase() (*gorm.DB, error) {
+func ConnectDatabase(connStr string) (*gorm.DB, error) {
 	// Connection to db using GORM
-	connStr := os.Getenv("DATABASE_URL")
-	log.Printf("✨ Connection str: %s", connStr)
 	conn, err := gorm.Open(postgres.Open(connStr), &gorm.Config{
 		Logger: logger.Default.LogMode(logger.Info),
 	})
