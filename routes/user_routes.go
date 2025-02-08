@@ -3,8 +3,9 @@ package routes
 import (
 	"net/http"
 
-	"github.com/alex-arraga/backend_store/utils"
 	"github.com/go-chi/chi/v5"
+
+	"github.com/alex-arraga/backend_store/utils"
 )
 
 func userRoutes() chi.Router {
