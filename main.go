@@ -7,7 +7,6 @@ import (
 
 	"github.com/alex-arraga/backend_store/config"
 	"github.com/alex-arraga/backend_store/database/connection"
-	"github.com/alex-arraga/backend_store/database/gorm_models"
 	"github.com/alex-arraga/backend_store/database/migrations"
 	"github.com/alex-arraga/backend_store/routes"
 )
@@ -25,7 +24,7 @@ func main() {
 	}
 
 	// Execute migrations
-	migrations.Migrate(&gorm_models.User{})
+	migrations.ExecMigrations()
 
 	// Load routes
 	r := routes.MountRoutes()
