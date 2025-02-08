@@ -6,6 +6,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/joho/godotenv"
 
 	"github.com/alex-arraga/backend_store/database/connection"
@@ -27,11 +28,27 @@ func main() {
 	})
 
 	port := os.Getenv("PORT")
-	connection.ConnectDatabase()
-	migrations.Migrate(&models.User{
-		Name:  "John",
-		Email: "john@gmail.com",
-	})
+
+	// Database connection
+	db, err := connection.ConnectDatabase()
+	if err != nil {
+		log.Fatalf("Database error: %d", err)
+	}
+
+	// Execute migrations
+	migrations.Migrate(&models.User{})
+
+	// Example: create a user
+	user := models.User{
+		ID:    uuid.New(),
+		Name:  "John Doe",
+		Email: "johndoe@example.com",
+	}
+
+	if result := db.Create(&user); result.Error != nil {
+		log.Fatalf("Error creating user: %d", result.Error)
+	}
+	log.Printf("User created: %+v\n", user)
 
 	s := http.Server{
 		Addr:         ":" + port,
@@ -40,6 +57,7 @@ func main() {
 		IdleTimeout:  60 * time.Second,
 	}
 
+	log.Print("Server listening...")
 	err = s.ListenAndServe()
 	if err != nil {
 		log.Fatal("Server failed")

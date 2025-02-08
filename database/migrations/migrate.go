@@ -7,10 +7,10 @@ import (
 )
 
 func Migrate(models ...interface{}) {
-	err := connection.DB.AutoMigrate(models...)
-	if err != nil {
-		log.Fatalf("Error executing migration: %d", err)
+	for _, model := range models {
+		if err := connection.DB.AutoMigrate(model); err != nil {
+			log.Fatalf("Error executing migration: %v", err)
+		}
+		log.Printf("Migration '%v' successfully", model)
 	}
-
-	log.Printf("Migration '%v' successfully", models)
 }

@@ -12,7 +12,7 @@ import (
 
 var DB *gorm.DB
 
-func ConnectDatabase() {
+func ConnectDatabase() (*gorm.DB, error) {
 	// Connection to db using GORM
 	connStr := os.Getenv("DATABASE_URL")
 	log.Printf("✨ Connection str: %s", connStr)
@@ -36,4 +36,6 @@ func ConnectDatabase() {
 
 	log.Print("Database connection established")
 	DB = conn
+
+	return DB, nil
 }
