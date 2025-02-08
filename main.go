@@ -5,12 +5,10 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/google/uuid"
-
 	"github.com/alex-arraga/backend_store/config"
 	"github.com/alex-arraga/backend_store/database/connection"
+	"github.com/alex-arraga/backend_store/database/gorm_models"
 	"github.com/alex-arraga/backend_store/database/migrations"
-	"github.com/alex-arraga/backend_store/models"
 	"github.com/alex-arraga/backend_store/routes"
 )
 
@@ -21,28 +19,16 @@ func main() {
 	}
 
 	// Database connection
-	db, err := connection.ConnectDatabase(dbConn)
+	_, err = connection.ConnectDatabase(dbConn)
 	if err != nil {
 		log.Fatalf("Database error: %d", err)
 	}
 
+	// Execute migrations
+	migrations.Migrate(&gorm_models.User{})
+
 	// Load routes
 	r := routes.MountRoutes()
-
-	// Execute migrations
-	migrations.Migrate(&models.User{})
-
-	// Example: create a user
-	user := models.User{
-		ID:    uuid.New(),
-		Name:  "George",
-		Email: "george@example.com",
-	}
-
-	if result := db.Create(&user); result.Error != nil {
-		log.Fatalf("Error creating user: %d", result.Error)
-	}
-	log.Printf("User created: %+v\n", user)
 
 	s := http.Server{
 		Handler:      r,
