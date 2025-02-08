@@ -17,5 +17,5 @@ func migrate(models ...interface{}) {
 }
 
 func ExecMigrations() {
-		migrate(&gorm_models.User{})
+	migrate(&gorm_models.User{})
 }
