@@ -2,6 +2,7 @@ package repositories
 
 import (
 	"gorm.io/gorm"
+
 	"github.com/alex-arraga/backend_store/database/gorm_models"
 )
 
@@ -18,16 +19,16 @@ func NewUserRepo(db *gorm.DB) UserRepository {
 	return &RepoConnection{db: db}
 }
 
-func(repo *RepoConnection) CreateUser(user *gorm_models.User) error {
+func (repo *RepoConnection) CreateUser(user *gorm_models.User) error {
 	return repo.db.Create(user).Error
 }
 
 func (repo *RepoConnection) GetUserByID(id string) (*gorm_models.User, error) {
-    var user gorm_models.User
+	var user gorm_models.User
 
-    result := repo.db.First(&user, "id = ?", id)
-    if result.Error != nil {
-        return nil, result.Error
-    }
-    return &user, nil
+	result := repo.db.First(&user, "id = ?", id)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+	return &user, nil
 }
