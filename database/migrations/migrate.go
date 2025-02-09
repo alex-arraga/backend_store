@@ -12,8 +12,8 @@ func migrate(models ...interface{}) {
 		if err := connection.DB.AutoMigrate(model); err != nil {
 			log.Fatalf("Error executing migration: %v", err)
 		}
-		log.Printf("Migration '%v' successfully", model)
 	}
+	log.Printf("Migrations successfully")
 }
 
 func ExecMigrations() {
