@@ -8,6 +8,7 @@ import (
 	"github.com/alex-arraga/backend_store/config"
 	"github.com/alex-arraga/backend_store/database/connection"
 	"github.com/alex-arraga/backend_store/database/migrations"
+	"github.com/alex-arraga/backend_store/repositories"
 	"github.com/alex-arraga/backend_store/routes"
 )
 
@@ -18,13 +19,14 @@ func main() {
 	}
 
 	// Database connection
-	_, err = connection.ConnectDatabase(dbConn)
+	db, err := connection.ConnectDatabase(dbConn)
 	if err != nil {
 		log.Fatalf("Database error: %d", err)
 	}
 
 	// Execute migrations
 	migrations.ExecMigrations()
+	repositories.LoadRepositories(db)
 
 	// Load routes
 	r := routes.MountRoutes()
