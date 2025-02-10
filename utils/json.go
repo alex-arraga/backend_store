@@ -31,3 +31,14 @@ func RespondError(w http.ResponseWriter, code int, msg string) {
 
 	RespondJSON(w, code, errResponse{Error: msg})
 }
+
+func ParseRequestBody[T any](r *http.Request) (T, error) {
+	var params T
+
+	decoder := json.NewDecoder(r.Body)
+	defer r.Body.Close()
+	if err := decoder.Decode(&params); err != nil {
+		return params, err
+	}
+	return params, nil
+}
