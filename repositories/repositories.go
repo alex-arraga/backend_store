@@ -1,8 +1,18 @@
 package repositories
 
-import "gorm.io/gorm"
+import (
+	"gorm.io/gorm"
+)
+
+type RepositoryContainer struct {
+	UserRepo UserRepository
+}
 
 // Connects db with the all repositories
-func LoadRepositories(db *gorm.DB) {
-	newUserRepo(db)
+func LoadRepositories(db *gorm.DB) *RepositoryContainer {
+	return &RepositoryContainer{
+		UserRepo: newUserRepo(db),
+	}
 }
+
+// TODO: User the initialized repo
