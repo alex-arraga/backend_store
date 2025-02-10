@@ -1,7 +1,6 @@
 package services
 
 import (
-	"errors"
 	"fmt"
 
 	"github.com/alex-arraga/backend_store/database/gorm_models"
@@ -24,10 +23,6 @@ func NewUserService(repo repositories.UserRepository) UserService {
 }
 
 func (s *UserServiceImpl) CreateUser(userReq *models.User) error {
-	if userReq.Password == "" {
-		return errors.New("the password is required")
-	}
-
 	// Hashing password
 	hashedPassword, err := utils.HashPassword(userReq.Password)
 	if err != nil {
