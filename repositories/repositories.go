@@ -14,5 +14,3 @@ func LoadRepositories(db *gorm.DB) *RepositoryContainer {
 		UserRepo: newUserRepo(db),
 	}
 }
-
-// TODO: User the initialized repo
