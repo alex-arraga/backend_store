@@ -3,11 +3,12 @@ package services
 import (
 	"fmt"
 
+	"github.com/google/uuid"
+
 	"github.com/alex-arraga/backend_store/database/gorm_models"
 	"github.com/alex-arraga/backend_store/models"
 	"github.com/alex-arraga/backend_store/repositories"
 	"github.com/alex-arraga/backend_store/utils"
-	"github.com/google/uuid"
 )
 
 type UserService interface {
