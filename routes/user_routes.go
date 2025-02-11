@@ -32,12 +32,15 @@ func userRoutes() chi.Router {
 
 		if params.Name == "" {
 			utils.RespondError(w, http.StatusBadRequest, "Name is required")
+			return
 		}
 		if params.Email == "" {
 			utils.RespondError(w, http.StatusBadRequest, "Email is required")
+			return
 		}
 		if params.Password == "" {
 			utils.RespondError(w, http.StatusBadRequest, "Password is required")
+			return
 		}
 
 		userReq := models.User{
@@ -48,7 +51,7 @@ func userRoutes() chi.Router {
 
 		fmt.Print(userReq)
 
-		utils.RespondJSON(w, http.StatusOK, "Received a 'POST' request in /user route")
+		utils.RespondJSON(w, http.StatusOK, userReq)
 	})
 
 	r.Put("/", func(w http.ResponseWriter, r *http.Request) {
