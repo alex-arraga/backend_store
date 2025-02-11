@@ -1,12 +1,11 @@
 package routes
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
 
-	"github.com/alex-arraga/backend_store/models"
+	"github.com/alex-arraga/backend_store/handlers"
 	"github.com/alex-arraga/backend_store/utils"
 )
 
@@ -19,39 +18,7 @@ func userRoutes() chi.Router {
 	})
 
 	r.Post("/", func(w http.ResponseWriter, r *http.Request) {
-		type parameters struct {
-			Name     string `json:"name"`
-			Email    string `json:"email"`
-			Password string `json:"password"`
-		}
-
-		params, err := utils.ParseRequestBody[parameters](r)
-		if err != nil {
-			utils.RespondError(w, http.StatusBadRequest, fmt.Sprintf("Invalid input: %s", err))
-		}
-
-		if params.Name == "" {
-			utils.RespondError(w, http.StatusBadRequest, "Name is required")
-			return
-		}
-		if params.Email == "" {
-			utils.RespondError(w, http.StatusBadRequest, "Email is required")
-			return
-		}
-		if params.Password == "" {
-			utils.RespondError(w, http.StatusBadRequest, "Password is required")
-			return
-		}
-
-		userReq := models.User{
-			Name:     params.Name,
-			Email:    params.Email,
-			Password: params.Password,
-		}
-
-		fmt.Print(userReq)
-
-		utils.RespondJSON(w, http.StatusOK, userReq)
+		handlers.CreateUserHandler(w, r)
 	})
 
 	r.Put("/", func(w http.ResponseWriter, r *http.Request) {
