@@ -5,11 +5,12 @@ import (
 	"net/http"
 
 	"github.com/alex-arraga/backend_store/models"
+	"github.com/alex-arraga/backend_store/services"
 	"github.com/alex-arraga/backend_store/utils"
 )
 
 // Handler /user - POST
-func CreateUserHandler(w http.ResponseWriter, r *http.Request) {
+func CreateUserHandler(w http.ResponseWriter, r *http.Request, us services.UserService) {
 	type parameters struct {
 		Name     string `json:"name"`
 		Email    string `json:"email"`

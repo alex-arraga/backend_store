@@ -6,10 +6,11 @@ import (
 	"github.com/go-chi/chi/v5"
 
 	"github.com/alex-arraga/backend_store/handlers"
+	"github.com/alex-arraga/backend_store/services"
 	"github.com/alex-arraga/backend_store/utils"
 )
 
-func userRoutes() chi.Router {
+func userRoutes(us services.UserService) chi.Router {
 	r := chi.NewRouter()
 
 	// /user
@@ -18,7 +19,7 @@ func userRoutes() chi.Router {
 	})
 
 	r.Post("/", func(w http.ResponseWriter, r *http.Request) {
-		handlers.CreateUserHandler(w, r)
+		handlers.CreateUserHandler(w, r, us)
 	})
 
 	r.Put("/", func(w http.ResponseWriter, r *http.Request) {
