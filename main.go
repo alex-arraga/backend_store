@@ -27,6 +27,8 @@ func main() {
 
 	// Execute migrations
 	migrations.ExecMigrations()
+
+	// Load all repos and services
 	repos := repositories.LoadRepositories(db)
 	services.LoadServices(repos)
 
