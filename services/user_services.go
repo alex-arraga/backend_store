@@ -7,6 +7,7 @@ import (
 	"github.com/alex-arraga/backend_store/models"
 	"github.com/alex-arraga/backend_store/repositories"
 	"github.com/alex-arraga/backend_store/utils"
+	"github.com/google/uuid"
 )
 
 type UserService interface {
@@ -30,6 +31,7 @@ func (s *UserServiceImpl) CreateUser(userReq *models.User) error {
 	}
 
 	user := &gorm_models.User{
+		ID:       uuid.New(),
 		Name:     userReq.Name,
 		Email:    userReq.Email,
 		Password: &hashedPassword,

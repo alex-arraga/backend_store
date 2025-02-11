@@ -41,6 +41,11 @@ func CreateUserHandler(w http.ResponseWriter, r *http.Request, us services.UserS
 		Password: params.Password,
 	}
 
-	// TODO: Use service here to create user
-	utils.RespondJSON(w, http.StatusOK, userReq)
+	err = us.CreateUser(&userReq)
+	if err != nil {
+		utils.RespondError(w, http.StatusBadRequest, fmt.Sprintf("Error creating user: %d", err))
+		return
+	}
+
+	utils.RespondJSON(w, http.StatusOK, "User created successfully")
 }
