@@ -10,6 +10,7 @@ import (
 	"github.com/alex-arraga/backend_store/database/migrations"
 	"github.com/alex-arraga/backend_store/repositories"
 	"github.com/alex-arraga/backend_store/routes"
+	"github.com/alex-arraga/backend_store/services"
 )
 
 func main() {
@@ -26,7 +27,8 @@ func main() {
 
 	// Execute migrations
 	migrations.ExecMigrations()
-	repositories.LoadRepositories(db)
+	repos := repositories.LoadRepositories(db)
+	services.LoadServices(repos)
 
 	// Load routes
 	r := routes.MountRoutes()
