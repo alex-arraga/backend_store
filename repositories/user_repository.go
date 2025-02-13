@@ -7,6 +7,7 @@ import (
 )
 
 type UserRepository interface {
+	GetAllUsers() ([]*gorm_models.User, error)
 	CreateUser(user *gorm_models.User) error
 	GetUserByID(id string) (*gorm_models.User, error)
 }
@@ -31,4 +32,15 @@ func (repo *RepoConnection) GetUserByID(id string) (*gorm_models.User, error) {
 		return nil, result.Error
 	}
 	return &user, nil
+}
+
+func (repo *RepoConnection) GetAllUsers() ([]*gorm_models.User, error) {
+	var users []*gorm_models.User
+
+	result := repo.db.Find(&users)
+	if result.Error != nil {
+		return []*gorm_models.User{}, result.Error
+	}
+
+	return users, nil
 }
