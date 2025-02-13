@@ -20,12 +20,7 @@ func userRoutes(us services.UserService) chi.Router {
 	})
 
 	r.Get("/{userID}", func(w http.ResponseWriter, r *http.Request) {
-		userID := chi.URLParam(r, "userID")
-		if userID == "" {
-			utils.RespondError(w, http.StatusBadRequest, "User id is required")
-		}
-
-		utils.RespondJSON(w, http.StatusOK, "Received a 'GET' request in /user/{i} route: "+userID)
+		handlers.GetUserByIDHandler(w, r, us)
 	})
 
 	r.Post("/", func(w http.ResponseWriter, r *http.Request) {

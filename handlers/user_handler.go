@@ -7,6 +7,7 @@ import (
 	"github.com/alex-arraga/backend_store/models"
 	"github.com/alex-arraga/backend_store/services"
 	"github.com/alex-arraga/backend_store/utils"
+	"github.com/go-chi/chi/v5"
 )
 
 // Handler /user - POST
@@ -49,4 +50,21 @@ func CreateUserHandler(w http.ResponseWriter, r *http.Request, us services.UserS
 	}
 
 	utils.RespondJSON(w, http.StatusOK, "User created successfully")
+}
+
+// Handler /user/{userID} - GET
+func GetUserByIDHandler(w http.ResponseWriter, r *http.Request, us services.UserService) {
+	userID := chi.URLParam(r, "userID")
+	if userID == "" {
+		utils.RespondError(w, http.StatusBadRequest, "User id is required")
+		return
+	}
+
+	user, err := us.GetUserByID(userID)
+	if err != nil {
+		utils.RespondError(w, http.StatusBadRequest, fmt.Sprintf("User with id: %s not exist", userID))
+		return
+	}
+
+	utils.RespondJSON(w, http.StatusOK, user)
 }
