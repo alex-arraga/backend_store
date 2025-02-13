@@ -13,7 +13,7 @@ import (
 
 type UserService interface {
 	CreateUser(user *models.User) error
-	// GetUserByID(id string) (*models.User, error)
+	GetUserByID(id string) (*models.User, error)
 }
 
 type UserServiceImpl struct {
@@ -40,4 +40,19 @@ func (s *UserServiceImpl) CreateUser(userReq *models.User) error {
 
 	// Send data to repository
 	return s.repo.CreateUser(user)
+}
+
+func (s *UserServiceImpl) GetUserByID(id string) (*models.User, error) {
+	userDB, err := s.repo.GetUserByID(id)
+	if err != nil {
+		return nil, fmt.Errorf("couldn't get user: %d", err)
+	}
+
+	userReq := models.User{
+		ID:       userDB.ID,
+		Name:     userDB.Name,
+		Email:    userDB.Email,
+	}
+
+	return &userReq, nil
 }
