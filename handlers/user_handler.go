@@ -4,10 +4,11 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/go-chi/chi/v5"
+
 	"github.com/alex-arraga/backend_store/models"
 	"github.com/alex-arraga/backend_store/services"
 	"github.com/alex-arraga/backend_store/utils"
-	"github.com/go-chi/chi/v5"
 )
 
 // Handler /user - POST
