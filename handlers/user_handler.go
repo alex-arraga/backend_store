@@ -20,6 +20,7 @@ func CreateUserHandler(w http.ResponseWriter, r *http.Request, us services.UserS
 	params, err := utils.ParseRequestBody[parameters](r)
 	if err != nil {
 		utils.RespondError(w, http.StatusBadRequest, fmt.Sprintf("Invalid input: %s", err))
+		return
 	}
 
 	if params.Name == "" {

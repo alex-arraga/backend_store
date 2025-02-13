@@ -2,6 +2,7 @@ package utils
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 )
@@ -36,9 +37,11 @@ func ParseRequestBody[T any](r *http.Request) (T, error) {
 	var params T
 
 	decoder := json.NewDecoder(r.Body)
+	decoder.DisallowUnknownFields()
 	defer r.Body.Close()
+
 	if err := decoder.Decode(&params); err != nil {
-		return params, err
+		return params, fmt.Errorf("error decoding parameters: %v", err)
 	}
 	return params, nil
 }
