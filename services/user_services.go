@@ -49,9 +49,10 @@ func (s *UserServiceImpl) GetUserByID(id string) (*models.User, error) {
 	}
 
 	userReq := models.User{
-		ID:    userDB.ID,
-		Name:  userDB.Name,
-		Email: userDB.Email,
+		ID:       userDB.ID,
+		Name:     userDB.Name,
+		Email:    userDB.Email,
+		Password: *userDB.Password,
 	}
 
 	return &userReq, nil
