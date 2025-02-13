@@ -15,8 +15,7 @@ func userRoutes(us services.UserService) chi.Router {
 
 	// /user
 	r.Get("/", func(w http.ResponseWriter, r *http.Request) {
-		// TODO: Validate if user role is admin
-		utils.RespondJSON(w, http.StatusOK, "Received a 'GET' request in /user route")
+		handlers.GetAllUsersHandler(w, r, us)
 	})
 
 	r.Get("/{userID}", func(w http.ResponseWriter, r *http.Request) {

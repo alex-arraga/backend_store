@@ -69,3 +69,18 @@ func GetUserByIDHandler(w http.ResponseWriter, r *http.Request, us services.User
 
 	utils.RespondJSON(w, http.StatusOK, user)
 }
+
+func GetAllUsersHandler(w http.ResponseWriter, r *http.Request, us services.UserService) {
+	// TODO: Validate if user role is admin
+	// if user.Role != "admin" {
+	// 	return utils.RespondError(w, http.StatusUnauthorized, "Invalid user role")
+	// }
+
+	allUses, err := us.GetAllUsers()
+	if err != nil {
+		utils.RespondError(w, http.StatusInternalServerError, fmt.Sprintf("Error getting users: %d", err))
+		return
+	}
+
+	utils.RespondJSON(w, http.StatusOK, allUses)
+}
