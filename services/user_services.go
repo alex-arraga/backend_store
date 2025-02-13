@@ -57,3 +57,25 @@ func (s *UserServiceImpl) GetUserByID(id string) (*models.User, error) {
 
 	return &userReq, nil
 }
+
+func (s *UserServiceImpl) GetAllUsers() ([]models.User, error) {
+	usersDB, err := s.repo.GetAllUsers()
+	if err != nil {
+		return []models.User{}, fmt.Errorf("couldn't get users: %d", err)
+	}
+
+	var allUsers []models.User
+
+	for _, user := range usersDB {
+		u := models.User{
+			ID:       user.ID,
+			Name:     user.Name,
+			Email:    user.Email,
+			Password: *user.Password,
+		}
+
+		allUsers = append(allUsers, u)
+	}
+
+	return allUsers, nil
+}
