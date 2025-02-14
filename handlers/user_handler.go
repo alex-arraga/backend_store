@@ -11,7 +11,40 @@ import (
 	"github.com/alex-arraga/backend_store/utils"
 )
 
-// Handler /user - POST
+// path: /user - GET
+func GetAllUsersHandler(w http.ResponseWriter, r *http.Request, us services.UserService) {
+	// TODO: Validate if user role is admin
+	// if user.Role != "admin" {
+	// 	return utils.RespondError(w, http.StatusUnauthorized, "Invalid user role")
+	// }
+
+	allUses, err := us.GetAllUsers()
+	if err != nil {
+		utils.RespondError(w, http.StatusInternalServerError, fmt.Sprintf("Error getting users: %d", err))
+		return
+	}
+
+	utils.RespondJSON(w, http.StatusOK, allUses)
+}
+
+// path: /user/{userID} - GET
+func GetUserByIDHandler(w http.ResponseWriter, r *http.Request, us services.UserService) {
+	userID := chi.URLParam(r, "userID")
+	if userID == "" {
+		utils.RespondError(w, http.StatusBadRequest, "User id is required")
+		return
+	}
+
+	user, err := us.GetUserByID(userID)
+	if err != nil {
+		utils.RespondError(w, http.StatusBadRequest, fmt.Sprintf("User with id: %s not exist", userID))
+		return
+	}
+
+	utils.RespondJSON(w, http.StatusOK, user)
+}
+
+// path: /user - POST
 func CreateUserHandler(w http.ResponseWriter, r *http.Request, us services.UserService) {
 	type parameters struct {
 		Name     string `json:"name"`
@@ -51,36 +84,4 @@ func CreateUserHandler(w http.ResponseWriter, r *http.Request, us services.UserS
 	}
 
 	utils.RespondJSON(w, http.StatusOK, "User created successfully")
-}
-
-// Handler /user/{userID} - GET
-func GetUserByIDHandler(w http.ResponseWriter, r *http.Request, us services.UserService) {
-	userID := chi.URLParam(r, "userID")
-	if userID == "" {
-		utils.RespondError(w, http.StatusBadRequest, "User id is required")
-		return
-	}
-
-	user, err := us.GetUserByID(userID)
-	if err != nil {
-		utils.RespondError(w, http.StatusBadRequest, fmt.Sprintf("User with id: %s not exist", userID))
-		return
-	}
-
-	utils.RespondJSON(w, http.StatusOK, user)
-}
-
-func GetAllUsersHandler(w http.ResponseWriter, r *http.Request, us services.UserService) {
-	// TODO: Validate if user role is admin
-	// if user.Role != "admin" {
-	// 	return utils.RespondError(w, http.StatusUnauthorized, "Invalid user role")
-	// }
-
-	allUses, err := us.GetAllUsers()
-	if err != nil {
-		utils.RespondError(w, http.StatusInternalServerError, fmt.Sprintf("Error getting users: %d", err))
-		return
-	}
-
-	utils.RespondJSON(w, http.StatusOK, allUses)
 }
