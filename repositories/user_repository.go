@@ -10,7 +10,7 @@ type UserRepository interface {
 	GetAllUsers() ([]gorm_models.User, error)
 	GetUserByID(id string) (*gorm_models.User, error)
 	CreateUser(user *gorm_models.User) error
-	DeleteUser(id string) error
+	DeleteUserByID(id string) error
 }
 
 type RepoConnection struct {
@@ -44,7 +44,7 @@ func (repo *RepoConnection) CreateUser(user *gorm_models.User) error {
 	return repo.db.Create(user).Error
 }
 
-func (repo *RepoConnection) DeleteUser(id string) error {
+func (repo *RepoConnection) DeleteUserByID(id string) error {
 	var user gorm_models.User
 
 	if result := repo.db.Delete(&user, "id = ?", id); result.Error != nil {

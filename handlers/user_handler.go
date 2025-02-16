@@ -86,6 +86,7 @@ func CreateUserHandler(w http.ResponseWriter, r *http.Request, us services.UserS
 	utils.RespondJSON(w, http.StatusOK, "User created successfully")
 }
 
+// path: /user/{userID} - DELETE
 func DeleteUserHandler(w http.ResponseWriter, r *http.Request, us services.UserService) {
 	userID := chi.URLParam(r, "userID")
 	if userID == "" {
@@ -93,7 +94,7 @@ func DeleteUserHandler(w http.ResponseWriter, r *http.Request, us services.UserS
 		return
 	}
 
-	if err := us.DeleteUser(userID); err != nil {
+	if err := us.DeleteUserByID(userID); err != nil {
 		utils.RespondError(w, http.StatusInternalServerError, fmt.Sprintf("Error deleting user: %d", err))
 		return
 	}
