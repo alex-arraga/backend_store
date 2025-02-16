@@ -30,8 +30,8 @@ func userRoutes(us services.UserService) chi.Router {
 		utils.RespondError(w, http.StatusOK, "Received a ERROR in 'PUT' request in /user route")
 	})
 
-	r.Delete("/", func(w http.ResponseWriter, r *http.Request) {
-		utils.RespondError(w, http.StatusOK, "Received a ERROR in 'DELETE' request in /user route")
+	r.Delete("/{userID}", func(w http.ResponseWriter, r *http.Request) {
+		handlers.DeleteUserHandler(w, r, us)
 	})
 
 	return r
