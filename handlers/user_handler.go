@@ -85,3 +85,18 @@ func CreateUserHandler(w http.ResponseWriter, r *http.Request, us services.UserS
 
 	utils.RespondJSON(w, http.StatusOK, "User created successfully")
 }
+
+func DeleteUserHandler(w http.ResponseWriter, r *http.Request, us services.UserService) {
+	userID := chi.URLParam(r, "userID")
+	if userID == "" {
+		utils.RespondError(w, http.StatusBadRequest, "User id is required")
+		return
+	}
+
+	if err := us.DeleteUser(userID); err != nil {
+		utils.RespondError(w, http.StatusInternalServerError, fmt.Sprintf("Error deleting user: %d", err))
+		return
+	}
+
+	utils.RespondJSON(w, http.StatusOK, "User deleted successfully")
+}
