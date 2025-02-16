@@ -24,8 +24,7 @@ func newUserRepo(db *gorm.DB) UserRepository {
 func (repo *RepoConnection) GetAllUsers() ([]gorm_models.User, error) {
 	var users []gorm_models.User
 
-	result := repo.db.Find(&users)
-	if result.Error != nil {
+	if result := repo.db.Find(&users); result.Error != nil {
 		return []gorm_models.User{}, result.Error
 	}
 
@@ -35,8 +34,7 @@ func (repo *RepoConnection) GetAllUsers() ([]gorm_models.User, error) {
 func (repo *RepoConnection) GetUserByID(id string) (*gorm_models.User, error) {
 	var user gorm_models.User
 
-	result := repo.db.First(&user, "id = ?", id)
-	if result.Error != nil {
+	if result := repo.db.First(&user, "id = ?", id); result.Error != nil {
 		return nil, result.Error
 	}
 	return &user, nil
@@ -48,6 +46,7 @@ func (repo *RepoConnection) CreateUser(user *gorm_models.User) error {
 
 func (repo *RepoConnection) DeleteUser(id string) error {
 	var user gorm_models.User
+
 	if result := repo.db.Delete(&user, "id = ?", id); result.Error != nil {
 		return result.Error
 	}
