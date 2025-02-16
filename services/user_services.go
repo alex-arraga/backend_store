@@ -15,6 +15,7 @@ type UserService interface {
 	GetAllUsers() ([]models.User, error)
 	GetUserByID(id string) (*models.User, error)
 	CreateUser(user *models.User) error
+	DeleteUser(id string) error
 }
 
 type UserServiceImpl struct {
@@ -79,4 +80,11 @@ func (s *UserServiceImpl) CreateUser(userReq *models.User) error {
 
 	// Send data to repository
 	return s.repo.CreateUser(user)
+}
+
+func (s *UserServiceImpl) DeleteUser(id string) error {
+	if err := s.repo.DeleteUser(id); err != nil {
+		return err
+	}
+	return nil
 }
