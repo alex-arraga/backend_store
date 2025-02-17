@@ -7,7 +7,6 @@ import (
 
 	"github.com/alex-arraga/backend_store/handlers"
 	"github.com/alex-arraga/backend_store/services"
-	"github.com/alex-arraga/backend_store/utils"
 )
 
 func userRoutes(us services.UserService) chi.Router {
@@ -26,8 +25,8 @@ func userRoutes(us services.UserService) chi.Router {
 		handlers.CreateUserHandler(w, r, us)
 	})
 
-	r.Put("/", func(w http.ResponseWriter, r *http.Request) {
-		utils.RespondError(w, http.StatusOK, "Received a ERROR in 'PUT' request in /user route")
+	r.Put("/{userTargetID}", func(w http.ResponseWriter, r *http.Request) {
+		handlers.UpdateUserHandler(w, r, us)
 	})
 
 	r.Delete("/{userID}", func(w http.ResponseWriter, r *http.Request) {
