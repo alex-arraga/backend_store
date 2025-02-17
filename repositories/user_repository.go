@@ -1,6 +1,8 @@
 package repositories
 
 import (
+	"fmt"
+
 	"gorm.io/gorm"
 
 	"github.com/alex-arraga/backend_store/database/gorm_models"
@@ -10,6 +12,7 @@ type UserRepository interface {
 	GetAllUsers() ([]gorm_models.User, error)
 	GetUserByID(id string) (*gorm_models.User, error)
 	CreateUser(user *gorm_models.User) error
+	UpdateUser(user *gorm_models.User) (*gorm_models.User, error)
 	DeleteUserByID(id string) error
 }
 
@@ -42,6 +45,18 @@ func (repo *RepoConnection) GetUserByID(id string) (*gorm_models.User, error) {
 
 func (repo *RepoConnection) CreateUser(user *gorm_models.User) error {
 	return repo.db.Create(user).Error
+}
+
+func (repo *RepoConnection) UpdateUser(user *gorm_models.User) (*gorm_models.User, error) {
+	fmt.Printf("✨ 1- User in Repo: %v \n", user)
+
+	result := repo.db.Model(&gorm_models.User{}).Where("id = ?", user.ID).Updates(user)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+
+	fmt.Printf("✨ 2- User in Repo after update: %v \n", user)
+	return user, nil
 }
 
 func (repo *RepoConnection) DeleteUserByID(id string) error {
