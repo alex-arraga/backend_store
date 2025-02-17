@@ -20,17 +20,9 @@ type UpdateUser struct {
 }
 
 // Models to output data
-// Para un usuario normal (sin role)
-type PublicUserResponse struct {
+type UserResponse struct {
 	ID    uuid.UUID `json:"id"`
 	Name  string    `json:"name"`
 	Email string    `json:"email"`
-}
-
-// Para un admin o dashboard (con role)
-type AdminUserResponse struct {
-	ID    uuid.UUID `json:"id"`
-	Name  string    `json:"name"`
-	Email string    `json:"email"`
-	Role  string    `json:"role"` // Solo si es necesario
+	Role  string    `json:"role"`
 }

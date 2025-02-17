@@ -15,7 +15,7 @@ type UserService interface {
 	GetAllUsers() ([]models.User, error)
 	GetUserByID(id string) (*models.User, error)
 	CreateUser(user *models.User) error
-	UpdateUser(requestingUserID, targetUserID string, userReq *models.UpdateUser) (*models.UpdateUser, error)
+	UpdateUser(requestingUserID, targetUserID string, userReq *models.UpdateUser) (*models.UserResponse, error)
 	DeleteUserByID(id string) error
 }
 
@@ -83,7 +83,7 @@ func (s *UserServiceImpl) CreateUser(userReq *models.User) error {
 	return s.repo.CreateUser(user)
 }
 
-func (s *UserServiceImpl) UpdateUser(requestingUserID, targetUserID string, userReq *models.UpdateUser) (*models.UpdateUser, error) {
+func (s *UserServiceImpl) UpdateUser(requestingUserID, targetUserID string, userReq *models.UpdateUser) (*models.UserResponse, error) {
 	// Get the user that try set changes
 	requestingUser, err := s.repo.GetUserByID(requestingUserID)
 	if err != nil {
@@ -122,11 +122,11 @@ func (s *UserServiceImpl) UpdateUser(requestingUserID, targetUserID string, user
 		return nil, err
 	}
 
-	u := models.UpdateUser{
-		Name:     &updatedUser.Name,
-		Email:    &updatedUser.Email,
-		Role:     &updatedUser.Role,
-		Password: updatedUser.Password,
+	u := models.UserResponse{
+		ID:    updatedUser.ID,
+		Name:  updatedUser.Name,
+		Email: updatedUser.Email,
+		Role:  updatedUser.Role,
 	}
 
 	return &u, nil
