@@ -1,6 +1,7 @@
 package services
 
 import (
+	"errors"
 	"fmt"
 
 	"github.com/google/uuid"
@@ -98,7 +99,7 @@ func (s *UserServiceImpl) UpdateUser(requestingUserID, targetUserID string, user
 
 	// Validate if requesting user is admin, just an admin can set different roles
 	if userReq.Role != nil && requestingUser.Role != "admin" {
-		return nil, fmt.Errorf("to change roles you must be an administrator: %d", err)
+		return nil, errors.New("you must be an administrator to change roles")
 	}
 
 	// Change just existing fields in the request

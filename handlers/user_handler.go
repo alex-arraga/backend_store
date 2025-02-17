@@ -124,14 +124,14 @@ func UpdateUserHandler(w http.ResponseWriter, r *http.Request, us services.UserS
 		utils.RespondError(w, http.StatusInternalServerError, fmt.Sprintf("Error updating user: %d", err))
 	}
 
-	response := models.UserResponse{
+	userResponse := models.UserResponse{
 		ID:    result.ID,
 		Name:  result.Name,
 		Email: result.Email,
 		Role:  result.Role,
 	}
 
-	utils.RespondJSON(w, http.StatusOK, fmt.Sprintf("User updated successfully \n %v", response))
+	utils.RespondJSON(w, http.StatusOK, userResponse)
 }
 
 // path: /user/{userID} - DELETE

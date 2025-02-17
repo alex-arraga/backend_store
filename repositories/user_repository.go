@@ -1,8 +1,6 @@
 package repositories
 
 import (
-	"fmt"
-
 	"gorm.io/gorm"
 
 	"github.com/alex-arraga/backend_store/database/gorm_models"
@@ -48,14 +46,11 @@ func (repo *RepoConnection) CreateUser(user *gorm_models.User) error {
 }
 
 func (repo *RepoConnection) UpdateUser(user *gorm_models.User) (*gorm_models.User, error) {
-	fmt.Printf("✨ 1- User in Repo: %v \n", user)
-
 	result := repo.db.Model(&gorm_models.User{}).Where("id = ?", user.ID).Updates(user)
 	if result.Error != nil {
 		return nil, result.Error
 	}
 
-	fmt.Printf("✨ 2- User in Repo after update: %v \n", user)
 	return user, nil
 }
 
