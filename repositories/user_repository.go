@@ -33,6 +33,7 @@ func (repo *RepoConnection) GetAllUsers() ([]gorm_models.User, error) {
 }
 
 func (repo *RepoConnection) GetUserByID(id string) (*gorm_models.User, error) {
+	// TODO: Validate if id is an UUID
 	var user gorm_models.User
 
 	if result := repo.db.First(&user, "id = ?", id); result.Error != nil {

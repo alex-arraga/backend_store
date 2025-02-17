@@ -1,7 +1,6 @@
 package services
 
 import (
-	"errors"
 	"fmt"
 
 	"github.com/google/uuid"
@@ -88,18 +87,18 @@ func (s *UserServiceImpl) UpdateUser(requestingUserID, targetUserID string, user
 	// Get the user that try set changes
 	requestingUser, err := s.repo.GetUserByID(requestingUserID)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("requesting user not found: %w", err)
 	}
 
 	// Check if the target user exist
 	targetUser, err := s.repo.GetUserByID(targetUserID)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("target user not found: %w", err)
 	}
 
 	// Validate if requesting user is admin, just an admin can set different roles
 	if userReq.Role != nil && requestingUser.Role != "admin" {
-		return nil, errors.New("you must be an administrator to change roles")
+		return nil, fmt.Errorf("you must be an administrator to change roles")
 	}
 
 	// Change just existing fields in the request
@@ -112,7 +111,7 @@ func (s *UserServiceImpl) UpdateUser(requestingUserID, targetUserID string, user
 	if userReq.Password != nil {
 		hashedPassword, err := utils.HashPassword(*userReq.Password)
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("failed hashing password: %w", err)
 		}
 		targetUser.Password = &hashedPassword
 	}
@@ -120,7 +119,7 @@ func (s *UserServiceImpl) UpdateUser(requestingUserID, targetUserID string, user
 	// Call repo and apply changes in db
 	updatedUser, err := s.repo.UpdateUser(targetUser)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to update user: %w", err)
 	}
 
 	u := models.UserResponse{
