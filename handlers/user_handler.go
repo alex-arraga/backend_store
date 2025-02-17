@@ -88,12 +88,25 @@ func CreateUserHandler(w http.ResponseWriter, r *http.Request, us services.UserS
 }
 
 func UpdateUserHandler(w http.ResponseWriter, r *http.Request, us services.UserService) {
-	// type parameters struct {
-	// 	Name     *string `json:"name,omitempty"`
-	// 	Email    *string `json:"email,omitempty"`
-	// 	Password *string `json:"password,omitempty"`
-	// 	Role     *string `json:"role,omitempty"`
-	// }
+	type parameters struct {
+		Name     *string `json:"name,omitempty"`
+		Email    *string `json:"email,omitempty"`
+		Password *string `json:"password,omitempty"`
+		Role     *string `json:"role,omitempty"`
+	}
+
+	params, err := utils.ParseRequestBody[parameters](r)
+	if err != nil {
+		utils.RespondError(w, http.StatusBadRequest, fmt.Sprintf("Invalid input: %s", err))
+		return
+	}
+
+	userReq := models.UpdateUser{
+		Name:     params.Name,
+		Email:    params.Email,
+		Password: params.Password,
+		Role:     params.Role,
+	}
 
 	// TODO: Get userID from context, auth middleware
 	// requestingUserID, ok := r.Context().Value(middlewares.UserIDKey).(string)
@@ -102,11 +115,16 @@ func UpdateUserHandler(w http.ResponseWriter, r *http.Request, us services.UserS
 	// 	return
 	// }
 
-	requetingUserID := os.Getenv("REQUESTING_USER")
+	requestingUserID := os.Getenv("REQUESTING_USER")
 	targetUserID := chi.URLParam(r, "targetUserID")
 
-	fmt.Println("📌 Requesting User" + requetingUserID)
-	fmt.Println("📌 Target User" + targetUserID)
+	// Call service
+	result, err := us.UpdateUser(requestingUserID, targetUserID, &userReq)
+	if err != nil {
+		utils.RespondError(w, http.StatusInternalServerError, fmt.Sprintf("Error updating user: %d", err))
+	}
+
+	utils.RespondJSON(w, http.StatusOK, fmt.Sprintf("User updated successfully \n %v", result))
 }
 
 // path: /user/{userID} - DELETE
