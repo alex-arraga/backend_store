@@ -82,6 +82,55 @@ func (s *UserServiceImpl) CreateUser(userReq *models.User) error {
 	return s.repo.CreateUser(user)
 }
 
+func (s *UserServiceImpl) UpdateUser(requestingUserID, targetUserID string, userReq *models.UpdateUser) (*models.UpdateUser, error) {
+	// Get the user that try set changes
+	requestingUser, err := s.repo.GetUserByID(requestingUserID)
+	if err != nil {
+		return nil, err
+	}
+
+	// Check if the target user exist
+	targetUser, err := s.repo.GetUserByID(targetUserID)
+	if err != nil {
+		return nil, err
+	}
+
+	// Validate if requesting user is admin, just an admin can set different roles
+	if userReq.Role != nil && requestingUser.Role != "admin" {
+		return nil, fmt.Errorf("to change roles you must be an administrator: %d", err)
+	}
+
+	// Change just existing fields in the request
+	if userReq.Name != nil {
+		targetUser.Name = *userReq.Name
+	}
+	if userReq.Email != nil {
+		targetUser.Email = *userReq.Email
+	}
+	if userReq.Password != nil {
+		hashedPassword, err := utils.HashPassword(*userReq.Password)
+		if err != nil {
+			return nil, err
+		}
+		targetUser.Password = &hashedPassword
+	}
+
+	// Call repo and apply changes in db
+	updatedUser, err := s.repo.UpdateUser(targetUser)
+	if err != nil {
+		return nil, err
+	}
+
+	u := models.UpdateUser{
+		Name:     &updatedUser.Name,
+		Email:    &updatedUser.Email,
+		Role:     &updatedUser.Role,
+		Password: updatedUser.Password,
+	}
+
+	return &u, nil
+}
+
 func (s *UserServiceImpl) DeleteUserByID(id string) error {
 	if err := s.repo.DeleteUserByID(id); err != nil {
 		return err
