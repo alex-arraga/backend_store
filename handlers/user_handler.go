@@ -3,6 +3,7 @@ package handlers
 import (
 	"fmt"
 	"net/http"
+	"os"
 
 	"github.com/go-chi/chi/v5"
 
@@ -84,6 +85,28 @@ func CreateUserHandler(w http.ResponseWriter, r *http.Request, us services.UserS
 	}
 
 	utils.RespondJSON(w, http.StatusOK, "User created successfully")
+}
+
+func UpdateUserHandler(w http.ResponseWriter, r *http.Request, us services.UserService) {
+	// type parameters struct {
+	// 	Name     *string `json:"name,omitempty"`
+	// 	Email    *string `json:"email,omitempty"`
+	// 	Password *string `json:"password,omitempty"`
+	// 	Role     *string `json:"role,omitempty"`
+	// }
+
+	// TODO: Get userID from context, auth middleware
+	// requestingUserID, ok := r.Context().Value(middlewares.UserIDKey).(string)
+	// if !ok || requestingUserID == "" {
+	// 	http.Error(w, "Unauthorized", http.StatusUnauthorized)
+	// 	return
+	// }
+
+	requetingUserID := os.Getenv("REQUESTING_USER")
+	targetUserID := chi.URLParam(r, "userID")
+
+	fmt.Print(requetingUserID)
+	fmt.Print(targetUserID)
 }
 
 // path: /user/{userID} - DELETE
