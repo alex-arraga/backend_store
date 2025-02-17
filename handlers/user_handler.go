@@ -103,7 +103,7 @@ func UpdateUserHandler(w http.ResponseWriter, r *http.Request, us services.UserS
 	// }
 
 	requetingUserID := os.Getenv("REQUESTING_USER")
-	targetUserID := chi.URLParam(r, "userTargetID")
+	targetUserID := chi.URLParam(r, "targetUserID")
 
 	fmt.Print(requetingUserID)
 	fmt.Print(targetUserID)

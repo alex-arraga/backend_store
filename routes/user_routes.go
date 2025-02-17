@@ -25,7 +25,7 @@ func userRoutes(us services.UserService) chi.Router {
 		handlers.CreateUserHandler(w, r, us)
 	})
 
-	r.Put("/{userTargetID}", func(w http.ResponseWriter, r *http.Request) {
+	r.Put("/{targetUserID}", func(w http.ResponseWriter, r *http.Request) {
 		handlers.UpdateUserHandler(w, r, us)
 	})
 
