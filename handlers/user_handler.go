@@ -87,6 +87,7 @@ func CreateUserHandler(w http.ResponseWriter, r *http.Request, us services.UserS
 	utils.RespondJSON(w, http.StatusOK, "User created successfully")
 }
 
+// path /user/{targetUserID} - PUT
 func UpdateUserHandler(w http.ResponseWriter, r *http.Request, us services.UserService) {
 	type parameters struct {
 		Name     *string `json:"name,omitempty"`
