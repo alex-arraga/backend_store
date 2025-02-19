@@ -25,7 +25,7 @@ func GetAllUsersHandler(w http.ResponseWriter, r *http.Request, us services.User
 		return
 	}
 
-	utils.RespondJSON(w, http.StatusOK, allUses)
+	utils.RespondJSON(w, http.StatusOK, "All users successfully obtained", allUses)
 }
 
 // path: /user/{userID} - GET
@@ -42,7 +42,7 @@ func GetUserByIDHandler(w http.ResponseWriter, r *http.Request, us services.User
 		return
 	}
 
-	utils.RespondJSON(w, http.StatusOK, user)
+	utils.RespondJSON(w, http.StatusOK, "User successfully found", user)
 }
 
 // path: /user - POST
@@ -84,7 +84,7 @@ func CreateUserHandler(w http.ResponseWriter, r *http.Request, us services.UserS
 		return
 	}
 
-	utils.RespondJSON(w, http.StatusOK, user)
+	utils.RespondJSON(w, http.StatusOK, "User created successfully", user)
 }
 
 // path /user/{targetUserID} - PUT
@@ -132,7 +132,7 @@ func UpdateUserHandler(w http.ResponseWriter, r *http.Request, us services.UserS
 		Role:  result.Role,
 	}
 
-	utils.RespondJSON(w, http.StatusOK, userResponse)
+	utils.RespondJSON(w, http.StatusOK, "User updated successfully", userResponse)
 }
 
 // path: /user/{userID} - DELETE
@@ -148,5 +148,5 @@ func DeleteUserHandler(w http.ResponseWriter, r *http.Request, us services.UserS
 		return
 	}
 
-	utils.RespondJSON(w, http.StatusOK, "User deleted successfully")
+	utils.RespondJSON(w, http.StatusOK, "User deleted successfully", map[string]interface{}{})
 }
