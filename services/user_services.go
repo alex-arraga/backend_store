@@ -13,7 +13,7 @@ import (
 
 type UserService interface {
 	GetAllUsers() ([]models.UserResponse, error)
-	GetUserByID(id string) (*models.User, error)
+	GetUserByID(id string) (*models.UserResponse, error)
 	CreateUser(user *models.User) error
 	UpdateUser(requestingUserID, targetUserID string, userReq *models.UpdateUser) (*models.UserResponse, error)
 	DeleteUserByID(id string) error
@@ -49,17 +49,17 @@ func (s *UserServiceImpl) GetAllUsers() ([]models.UserResponse, error) {
 	return allUsers, nil
 }
 
-func (s *UserServiceImpl) GetUserByID(id string) (*models.User, error) {
+func (s *UserServiceImpl) GetUserByID(id string) (*models.UserResponse, error) {
 	userDB, err := s.repo.GetUserByID(id)
 	if err != nil {
 		return nil, fmt.Errorf("couldn't get user: %d", err)
 	}
 
-	userReq := models.User{
-		ID:       userDB.ID,
-		Name:     userDB.Name,
-		Email:    userDB.Email,
-		Password: *userDB.Password,
+	userReq := models.UserResponse{
+		ID:    userDB.ID,
+		Name:  userDB.Name,
+		Email: userDB.Email,
+		Role:  userDB.Role,
 	}
 
 	return &userReq, nil
