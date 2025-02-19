@@ -44,8 +44,10 @@ func RespondError(w http.ResponseWriter, code int, msg string) {
 	}
 
 	// Estructura de error con "error" en lugar de "msg"
-	response := map[string]interface{}{
-		"error": msg,
+	response := struct {
+		Error string `json:"error"`
+	}{
+		Error: msg,
 	}
 
 	// Convertir a JSON
