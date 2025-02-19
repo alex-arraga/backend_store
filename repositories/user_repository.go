@@ -9,7 +9,7 @@ import (
 type UserRepository interface {
 	GetAllUsers() ([]gorm_models.User, error)
 	GetUserByID(id string) (*gorm_models.User, error)
-	CreateUser(user *gorm_models.User) error
+	CreateUser(user *gorm_models.User) (*gorm_models.User, error)
 	UpdateUser(user *gorm_models.User) (*gorm_models.User, error)
 	DeleteUserByID(id string) error
 }
@@ -42,8 +42,12 @@ func (repo *RepoConnection) GetUserByID(id string) (*gorm_models.User, error) {
 	return &user, nil
 }
 
-func (repo *RepoConnection) CreateUser(user *gorm_models.User) error {
-	return repo.db.Create(user).Error
+func (repo *RepoConnection) CreateUser(user *gorm_models.User) (*gorm_models.User, error) {
+	if result := repo.db.Create(user); result.Error != nil {
+		return nil, result.Error
+	}
+
+	return user, nil
 }
 
 func (repo *RepoConnection) UpdateUser(user *gorm_models.User) (*gorm_models.User, error) {

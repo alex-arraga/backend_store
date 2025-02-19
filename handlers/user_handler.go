@@ -78,13 +78,13 @@ func CreateUserHandler(w http.ResponseWriter, r *http.Request, us services.UserS
 		Password: params.Password,
 	}
 
-	err = us.CreateUser(&userReq)
+	user, err := us.CreateUser(&userReq)
 	if err != nil {
 		utils.RespondError(w, http.StatusBadRequest, fmt.Sprintf("Error creating user: %d", err))
 		return
 	}
 
-	utils.RespondJSON(w, http.StatusOK, "User created successfully")
+	utils.RespondJSON(w, http.StatusOK, user)
 }
 
 // path /user/{targetUserID} - PUT
