@@ -12,7 +12,7 @@ import (
 )
 
 type UserService interface {
-	GetAllUsers() ([]models.User, error)
+	GetAllUsers() ([]models.UserResponse, error)
 	GetUserByID(id string) (*models.User, error)
 	CreateUser(user *models.User) error
 	UpdateUser(requestingUserID, targetUserID string, userReq *models.UpdateUser) (*models.UserResponse, error)
@@ -27,20 +27,20 @@ func NewUserService(repo repositories.UserRepository) UserService {
 	return &UserServiceImpl{repo: repo}
 }
 
-func (s *UserServiceImpl) GetAllUsers() ([]models.User, error) {
+func (s *UserServiceImpl) GetAllUsers() ([]models.UserResponse, error) {
 	usersDB, err := s.repo.GetAllUsers()
 	if err != nil {
-		return []models.User{}, fmt.Errorf("couldn't get users: %d", err)
+		return []models.UserResponse{}, fmt.Errorf("couldn't get users: %d", err)
 	}
 
-	var allUsers []models.User
+	var allUsers []models.UserResponse
 
 	for _, user := range usersDB {
-		u := models.User{
-			ID:       user.ID,
-			Name:     user.Name,
-			Email:    user.Email,
-			Password: *user.Password,
+		u := models.UserResponse{
+			ID:    user.ID,
+			Name:  user.Name,
+			Email: user.Email,
+			Role:  user.Role,
 		}
 
 		allUsers = append(allUsers, u)
