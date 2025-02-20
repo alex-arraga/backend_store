@@ -1,9 +1,10 @@
 package main
 
 import (
+	"gorm.io/gorm"
+
 	"github.com/alex-arraga/backend_store/config"
 	"github.com/alex-arraga/backend_store/database/connection"
-	"gorm.io/gorm"
 )
 
 type AppConfig struct {
