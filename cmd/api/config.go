@@ -5,6 +5,7 @@ import (
 
 	"github.com/alex-arraga/backend_store/config"
 	"github.com/alex-arraga/backend_store/database/connection"
+	"github.com/alex-arraga/backend_store/database/migrations"
 )
 
 type AppConfig struct {
@@ -12,18 +13,21 @@ type AppConfig struct {
 	DB   *gorm.DB
 }
 
-// LoadAppConfig carga la configuración y la conexión a la DB.
+// LoadAppConfig load configuration and db
 func LoadAppConfig() (*AppConfig, error) {
 	port, dbConn, err := config.LoadConfig()
 	if err != nil {
 		return nil, err
 	}
 
-	// Conectar a la base de datos
+	// Connect to database
 	db, err := connection.ConnectDatabase(dbConn)
 	if err != nil {
 		return nil, err
 	}
+
+	// Execute migrations of db
+	migrations.ExecMigrations()
 
 	return &AppConfig{
 		Port: port,
