@@ -19,5 +19,8 @@ go.work
 go.work.sum
 TODO.md
 
+# vs code config
+.vscode
+
 # env file
 .env
