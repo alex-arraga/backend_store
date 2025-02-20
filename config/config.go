@@ -8,7 +8,7 @@ import (
 )
 
 func LoadConfig() (port, dbConn string, e error) {
-	const envFile string = ".env"
+	const envFile string = "../../.env"
 
 	err := godotenv.Load(envFile)
 	if err != nil {
