@@ -13,7 +13,7 @@ type AppConfig struct {
 	DB   *gorm.DB
 }
 
-// LoadAppConfig load configuration and db
+// LoadAppConfig load app and database configuration
 func LoadAppConfig() (*AppConfig, error) {
 	port, dbConn, err := config.LoadConfig()
 	if err != nil {
