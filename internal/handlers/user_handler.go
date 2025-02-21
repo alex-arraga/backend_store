@@ -9,40 +9,40 @@ import (
 
 	"github.com/alex-arraga/backend_store/internal/models"
 	"github.com/alex-arraga/backend_store/internal/services"
-	"github.com/alex-arraga/backend_store/pkg/utils"
+	"github.com/alex-arraga/backend_store/pkg/jsonutil"
 )
 
 // path: /user - GET
 func GetAllUsersHandler(w http.ResponseWriter, r *http.Request, us services.UserService) {
 	// TODO: Validate if user role is admin
 	// if user.Role != "admin" {
-	// 	return utils.RespondError(w, http.StatusUnauthorized, "Invalid user role")
+	// 	return jsonutil.RespondError(w, http.StatusUnauthorized, "Invalid user role")
 	// }
 
 	allUses, err := us.GetAllUsers()
 	if err != nil {
-		utils.RespondError(w, http.StatusInternalServerError, fmt.Sprintf("Error getting users: %d", err))
+		jsonutil.RespondError(w, http.StatusInternalServerError, fmt.Sprintf("Error getting users: %d", err))
 		return
 	}
 
-	utils.RespondJSON(w, http.StatusOK, "All users successfully obtained", allUses)
+	jsonutil.RespondJSON(w, http.StatusOK, "All users successfully obtained", allUses)
 }
 
 // path: /user/{userID} - GET
 func GetUserByIDHandler(w http.ResponseWriter, r *http.Request, us services.UserService) {
 	userID := chi.URLParam(r, "userID")
 	if userID == "" {
-		utils.RespondError(w, http.StatusBadRequest, "User id is required")
+		jsonutil.RespondError(w, http.StatusBadRequest, "User id is required")
 		return
 	}
 
 	user, err := us.GetUserByID(userID)
 	if err != nil {
-		utils.RespondError(w, http.StatusBadRequest, fmt.Sprintf("User with id: %s not exist", userID))
+		jsonutil.RespondError(w, http.StatusBadRequest, fmt.Sprintf("User with id: %s not exist", userID))
 		return
 	}
 
-	utils.RespondJSON(w, http.StatusOK, "User successfully found", user)
+	jsonutil.RespondJSON(w, http.StatusOK, "User successfully found", user)
 }
 
 // path: /user - POST
@@ -53,22 +53,22 @@ func CreateUserHandler(w http.ResponseWriter, r *http.Request, us services.UserS
 		Password string `json:"password"`
 	}
 
-	params, err := utils.ParseRequestBody[parameters](r)
+	params, err := jsonutil.ParseRequestBody[parameters](r)
 	if err != nil {
-		utils.RespondError(w, http.StatusBadRequest, fmt.Sprintf("Invalid input: %s", err))
+		jsonutil.RespondError(w, http.StatusBadRequest, fmt.Sprintf("Invalid input: %s", err))
 		return
 	}
 
 	if params.Name == "" {
-		utils.RespondError(w, http.StatusBadRequest, "Name is required")
+		jsonutil.RespondError(w, http.StatusBadRequest, "Name is required")
 		return
 	}
 	if params.Email == "" {
-		utils.RespondError(w, http.StatusBadRequest, "Email is required")
+		jsonutil.RespondError(w, http.StatusBadRequest, "Email is required")
 		return
 	}
 	if params.Password == "" {
-		utils.RespondError(w, http.StatusBadRequest, "Password is required")
+		jsonutil.RespondError(w, http.StatusBadRequest, "Password is required")
 		return
 	}
 
@@ -80,11 +80,11 @@ func CreateUserHandler(w http.ResponseWriter, r *http.Request, us services.UserS
 
 	user, err := us.CreateUser(&userReq)
 	if err != nil {
-		utils.RespondError(w, http.StatusBadRequest, fmt.Sprintf("Error creating user: %d", err))
+		jsonutil.RespondError(w, http.StatusBadRequest, fmt.Sprintf("Error creating user: %d", err))
 		return
 	}
 
-	utils.RespondJSON(w, http.StatusOK, "User created successfully", user)
+	jsonutil.RespondJSON(w, http.StatusOK, "User created successfully", user)
 }
 
 // path /user/{targetUserID} - PUT
@@ -96,9 +96,9 @@ func UpdateUserHandler(w http.ResponseWriter, r *http.Request, us services.UserS
 		Role     *string `json:"role,omitempty"`
 	}
 
-	params, err := utils.ParseRequestBody[parameters](r)
+	params, err := jsonutil.ParseRequestBody[parameters](r)
 	if err != nil {
-		utils.RespondError(w, http.StatusBadRequest, fmt.Sprintf("Invalid input: %s", err))
+		jsonutil.RespondError(w, http.StatusBadRequest, fmt.Sprintf("Invalid input: %s", err))
 		return
 	}
 
@@ -122,7 +122,7 @@ func UpdateUserHandler(w http.ResponseWriter, r *http.Request, us services.UserS
 	// Call service
 	result, err := us.UpdateUser(requestingUserID, targetUserID, &userReq)
 	if err != nil {
-		utils.RespondError(w, http.StatusInternalServerError, fmt.Sprintf("Error updating user: %d", err))
+		jsonutil.RespondError(w, http.StatusInternalServerError, fmt.Sprintf("Error updating user: %d", err))
 	}
 
 	userResponse := models.UserResponse{
@@ -132,21 +132,21 @@ func UpdateUserHandler(w http.ResponseWriter, r *http.Request, us services.UserS
 		Role:  result.Role,
 	}
 
-	utils.RespondJSON(w, http.StatusOK, "User updated successfully", userResponse)
+	jsonutil.RespondJSON(w, http.StatusOK, "User updated successfully", userResponse)
 }
 
 // path: /user/{userID} - DELETE
 func DeleteUserHandler(w http.ResponseWriter, r *http.Request, us services.UserService) {
 	userID := chi.URLParam(r, "userID")
 	if userID == "" {
-		utils.RespondError(w, http.StatusBadRequest, "User id is required")
+		jsonutil.RespondError(w, http.StatusBadRequest, "User id is required")
 		return
 	}
 
 	if err := us.DeleteUserByID(userID); err != nil {
-		utils.RespondError(w, http.StatusInternalServerError, fmt.Sprintf("Error deleting user: %d", err))
+		jsonutil.RespondError(w, http.StatusInternalServerError, fmt.Sprintf("Error deleting user: %d", err))
 		return
 	}
 
-	utils.RespondJSON(w, http.StatusOK, "User deleted successfully", map[string]interface{}{})
+	jsonutil.RespondJSON(w, http.StatusOK, "User deleted successfully", map[string]interface{}{})
 }

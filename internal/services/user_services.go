@@ -8,7 +8,7 @@ import (
 	"github.com/alex-arraga/backend_store/internal/database/gorm_models"
 	"github.com/alex-arraga/backend_store/internal/models"
 	"github.com/alex-arraga/backend_store/internal/repositories"
-	"github.com/alex-arraga/backend_store/pkg/utils"
+	"github.com/alex-arraga/backend_store/pkg/hasher"
 )
 
 type UserService interface {
@@ -67,7 +67,7 @@ func (s *UserServiceImpl) GetUserByID(id string) (*models.UserResponse, error) {
 
 func (s *UserServiceImpl) CreateUser(userReq *models.User) (*models.UserResponse, error) {
 	// Hashing password
-	hashedPassword, err := utils.HashPassword(userReq.Password)
+	hashedPassword, err := hasher.HashPassword(userReq.Password)
 	if err != nil {
 		return nil, fmt.Errorf("error hashing password: %d", err)
 	}
@@ -121,7 +121,7 @@ func (s *UserServiceImpl) UpdateUser(requestingUserID, targetUserID string, user
 		targetUser.Email = *userReq.Email
 	}
 	if userReq.Password != nil {
-		hashedPassword, err := utils.HashPassword(*userReq.Password)
+		hashedPassword, err := hasher.HashPassword(*userReq.Password)
 		if err != nil {
 			return nil, fmt.Errorf("failed hashing password: %w", err)
 		}
