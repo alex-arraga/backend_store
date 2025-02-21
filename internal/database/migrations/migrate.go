@@ -3,8 +3,8 @@ package migrations
 import (
 	"log"
 
-	"github.com/alex-arraga/backend_store/database/connection"
-	"github.com/alex-arraga/backend_store/database/gorm_models"
+	"github.com/alex-arraga/backend_store/internal/database/connection"
+	"github.com/alex-arraga/backend_store/internal/database/gorm_models"
 )
 
 func migrate(models ...interface{}) {

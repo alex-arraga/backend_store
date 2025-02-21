@@ -3,7 +3,7 @@ package repositories
 import (
 	"gorm.io/gorm"
 
-	"github.com/alex-arraga/backend_store/database/gorm_models"
+	"github.com/alex-arraga/backend_store/internal/database/gorm_models"
 )
 
 type UserRepository interface {

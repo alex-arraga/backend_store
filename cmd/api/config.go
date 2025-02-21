@@ -4,8 +4,8 @@ import (
 	"gorm.io/gorm"
 
 	"github.com/alex-arraga/backend_store/config"
-	"github.com/alex-arraga/backend_store/database/connection"
-	"github.com/alex-arraga/backend_store/database/migrations"
+	"github.com/alex-arraga/backend_store/internal/database/connection"
+	"github.com/alex-arraga/backend_store/internal/database/migrations"
 )
 
 type AppConfig struct {
