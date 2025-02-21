@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/alex-arraga/backend_store/repositories"
+	"github.com/alex-arraga/backend_store/internal/repositories"
 	"github.com/alex-arraga/backend_store/routes"
 	"github.com/alex-arraga/backend_store/services"
 )
