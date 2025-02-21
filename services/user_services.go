@@ -8,7 +8,7 @@ import (
 	"github.com/alex-arraga/backend_store/database/gorm_models"
 	"github.com/alex-arraga/backend_store/models"
 	"github.com/alex-arraga/backend_store/repositories"
-	"github.com/alex-arraga/backend_store/utils"
+	"github.com/alex-arraga/backend_store/pkg/utils"
 )
 
 type UserService interface {
