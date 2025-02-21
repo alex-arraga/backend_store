@@ -6,8 +6,8 @@ import (
 	"time"
 
 	"github.com/alex-arraga/backend_store/internal/repositories"
+	"github.com/alex-arraga/backend_store/internal/services"
 	"github.com/alex-arraga/backend_store/routes"
-	"github.com/alex-arraga/backend_store/services"
 )
 
 // StartServer configura y arranca el servidor HTTP.

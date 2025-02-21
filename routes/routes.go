@@ -3,7 +3,7 @@ package routes
 import (
 	"github.com/go-chi/chi/v5"
 
-	"github.com/alex-arraga/backend_store/services"
+	"github.com/alex-arraga/backend_store/internal/services"
 )
 
 func MountRoutes(services *services.ServicesContainer) chi.Router {

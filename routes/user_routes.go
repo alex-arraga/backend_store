@@ -6,7 +6,7 @@ import (
 	"github.com/go-chi/chi/v5"
 
 	"github.com/alex-arraga/backend_store/handlers"
-	"github.com/alex-arraga/backend_store/services"
+	"github.com/alex-arraga/backend_store/internal/services"
 )
 
 func userRoutes(us services.UserService) chi.Router {
