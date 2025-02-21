@@ -7,8 +7,8 @@ import (
 
 	"github.com/go-chi/chi/v5"
 
+	"github.com/alex-arraga/backend_store/internal/models"
 	"github.com/alex-arraga/backend_store/internal/services"
-	"github.com/alex-arraga/backend_store/models"
 	"github.com/alex-arraga/backend_store/pkg/utils"
 )
 

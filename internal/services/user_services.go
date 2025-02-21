@@ -6,8 +6,8 @@ import (
 	"github.com/google/uuid"
 
 	"github.com/alex-arraga/backend_store/internal/database/gorm_models"
+	"github.com/alex-arraga/backend_store/internal/models"
 	"github.com/alex-arraga/backend_store/internal/repositories"
-	"github.com/alex-arraga/backend_store/models"
 	"github.com/alex-arraga/backend_store/pkg/utils"
 )
 
