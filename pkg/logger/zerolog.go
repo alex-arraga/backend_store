@@ -13,29 +13,32 @@ var log zerolog.Logger
 
 // InitLogger init global logger
 func InitLogger(serviceName string) {
+	var multiWriter io.Writer
+	consoleWriter := zerolog.ConsoleWriter{Out: os.Stdout, TimeFormat: time.RFC3339}
+
 	// Config log rotation
-	logFile := &lumberjack.Logger{
-		Filename:   "logs/app.log", // Folder where logs will save
-		MaxSize:    10,             // MB
-		MaxBackups: 3,              // Matains 3 older files
-		MaxAge:     30,             // Days before to delete old logs
-		Compress:   true,           // Compress old logs
+	if os.Getenv("LOG_TO_FILE") == "true" {
+		logFile := &lumberjack.Logger{
+			Filename:   "logs/app.log",
+			MaxSize:    10,   // MB
+			MaxBackups: 3,    // Matains 3 older files
+			MaxAge:     30,   // Days before to delete old logs
+			Compress:   true, // Compress old logs
+		}
+		multiWriter = io.MultiWriter(consoleWriter, logFile)
+	} else {
+		multiWriter = consoleWriter
 	}
 
-	// Config the console output with JSON format
-	consoleWriter := zerolog.ConsoleWriter{Out: os.Stdout, TimeFormat: time.RFC3339}
-	multiWriter := io.MultiWriter(consoleWriter, logFile) // Salida a ambos
-
-	// Config global level of logs
-	zerolog.TimeFieldFormat = zerolog.TimeFormatUnix
-	log = zerolog.New(multiWriter).With().
-		Timestamp().
+	// Config the output of logs
+	log = zerolog.New(multiWriter).
+		With().Timestamp().
 		Str("service", serviceName).
 		Str("hostname", getHostname()).
 		Int("pid", os.Getpid()).
 		Logger()
 
-	// Allows config the log level
+	// Config the log level
 	logLevel := os.Getenv("LOG_LEVEL")
 	if level, err := zerolog.ParseLevel(logLevel); err == nil {
 		zerolog.SetGlobalLevel(level)
