@@ -3,8 +3,9 @@ package jsonutil
 import (
 	"encoding/json"
 	"fmt"
-	"log"
 	"net/http"
+
+	"github.com/alex-arraga/backend_store/pkg/logger"
 )
 
 func RespondJSON(w http.ResponseWriter, code int, msg string, payload interface{}) {
@@ -24,7 +25,7 @@ func RespondJSON(w http.ResponseWriter, code int, msg string, payload interface{
 	// Convert to JSON
 	data, err := json.Marshal(response)
 	if err != nil {
-		log.Printf("Failed to marshal JSON response: %v\n", err)
+		logger.UseLogger().Error().Err(err).Msg("Failed to marshal JSON response")
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
@@ -34,13 +35,15 @@ func RespondJSON(w http.ResponseWriter, code int, msg string, payload interface{
 	w.WriteHeader(code)
 	_, err = w.Write(data)
 	if err != nil {
-		log.Printf("Error writing JSON response: %d \n", err)
+		logger.UseLogger().Warn().Err(err).Msg("Error writing JSON response")
 	}
 }
 
 func RespondError(w http.ResponseWriter, code int, msg string) {
 	if code >= 500 {
-		log.Printf("Responding with 5xx error: %s\n", msg)
+		logger.UseLogger().Error().Msgf("Responding with 5XX error: %s \n", msg)
+	} else if code >= 400 {
+		logger.UseLogger().Warn().Msgf("Responding with 4XX error: %s", msg)
 	}
 
 	// Estructura de error con "error" en lugar de "msg"
@@ -53,7 +56,7 @@ func RespondError(w http.ResponseWriter, code int, msg string) {
 	// Convertir a JSON
 	data, err := json.Marshal(response)
 	if err != nil {
-		log.Printf("Failed to marshal JSON error response: %v\n", err)
+		logger.UseLogger().Error().Err(err).Msg("Failed to marshal JSON error response")
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
@@ -63,7 +66,7 @@ func RespondError(w http.ResponseWriter, code int, msg string) {
 	w.WriteHeader(code)
 	_, err = w.Write(data)
 	if err != nil {
-		log.Printf("Error writing error JSON response: %v\n", err)
+		logger.UseLogger().Warn().Err(err).Msg("Error writing error JSON response")
 	}
 }
 
@@ -75,7 +78,7 @@ func ParseRequestBody[T any](r *http.Request) (T, error) {
 	defer r.Body.Close()
 
 	if err := decoder.Decode(&params); err != nil {
-		return params, fmt.Errorf("error decoding parameters: %v", err)
+		return params, fmt.Errorf("error decoding parameters: %w", err)
 	}
 	return params, nil
 }
