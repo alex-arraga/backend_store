@@ -17,7 +17,8 @@ func InitLogger(serviceName string) {
 	consoleWriter := zerolog.ConsoleWriter{Out: os.Stdout, TimeFormat: time.RFC3339}
 
 	// Config log rotation
-	if os.Getenv("LOG_TO_FILE") == "true" {
+	saveLogsInFiles := os.Getenv("LOG_TO_FILE")
+	if saveLogsInFiles == "true" {
 		logFile := &lumberjack.Logger{
 			Filename:   "logs/app.log",
 			MaxSize:    10,   // MB
@@ -47,9 +48,9 @@ func InitLogger(serviceName string) {
 	}
 }
 
-// GetLogger return the logger configured
-func GetLogger() zerolog.Logger {
-	return log
+// UseLogger return the logger configured
+func UseLogger() *zerolog.Logger {
+	return &log
 }
 
 // getHostname obtain the host name

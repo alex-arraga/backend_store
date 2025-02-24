@@ -5,7 +5,9 @@ import (
 
 	"github.com/alex-arraga/backend_store/config"
 	"github.com/alex-arraga/backend_store/internal/database/connection"
+
 	"github.com/alex-arraga/backend_store/internal/database/migrations"
+	"github.com/alex-arraga/backend_store/pkg/logger"
 )
 
 type AppConfig struct {
@@ -28,6 +30,9 @@ func LoadAppConfig() (*AppConfig, error) {
 
 	// Execute migrations of db
 	migrations.ExecMigrations()
+
+	// Init global app logger
+	logger.InitLogger("eccomerce_app")
 
 	return &AppConfig{
 		Port: port,

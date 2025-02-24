@@ -1,13 +1,13 @@
 package main
 
 import (
-	"log"
 	"net/http"
 	"time"
 
 	"github.com/alex-arraga/backend_store/internal/repositories"
 	"github.com/alex-arraga/backend_store/internal/routes"
 	"github.com/alex-arraga/backend_store/internal/services"
+	"github.com/alex-arraga/backend_store/pkg/logger"
 )
 
 // StartServer configura y arranca el servidor HTTP.
@@ -28,9 +28,9 @@ func StartServer(config *AppConfig) {
 		IdleTimeout:  60 * time.Second,
 	}
 
-	log.Printf("Server listening on port %s...", config.Port)
+	logger.UseLogger().Info().Str("port", config.Port).Msgf("Server listening...")
 	err := s.ListenAndServe()
 	if err != nil {
-		log.Fatalf("Server failed: %v", err)
+		logger.UseLogger().Fatal().Err(err).Msg("Server failed")
 	}
 }
