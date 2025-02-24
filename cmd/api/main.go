@@ -1,11 +1,13 @@
 package main
 
-import "log"
+import (
+	"github.com/alex-arraga/backend_store/pkg/logger"
+)
 
 func main() {
 	config, err := LoadAppConfig()
 	if err != nil {
-		log.Fatalf("Error loading config: %v", err)
+		logger.UseLogger().Fatal().Err(err).Msg("Error loading app config")
 	}
 
 	StartServer(config)
