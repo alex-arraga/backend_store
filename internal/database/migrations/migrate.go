@@ -1,19 +1,18 @@
 package migrations
 
 import (
-	"log"
-
 	"github.com/alex-arraga/backend_store/internal/database/connection"
 	"github.com/alex-arraga/backend_store/internal/database/gorm_models"
+	"github.com/alex-arraga/backend_store/pkg/logger"
 )
 
 func migrate(models ...interface{}) {
 	for _, model := range models {
 		if err := connection.DB.AutoMigrate(model); err != nil {
-			log.Fatalf("Error executing migration: %d", err)
+			logger.UseLogger().Fatal().Err(err).Msg("Error executing migrations")
 		}
 	}
-	log.Printf("Migrations successfully")
+	logger.UseLogger().Info().Msg("Migrations successfully executed")
 }
 
 func ExecMigrations() {
