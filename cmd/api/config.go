@@ -5,7 +5,6 @@ import (
 
 	"github.com/alex-arraga/backend_store/config"
 	"github.com/alex-arraga/backend_store/internal/database/connection"
-
 	"github.com/alex-arraga/backend_store/internal/database/migrations"
 	"github.com/alex-arraga/backend_store/pkg/logger"
 )
