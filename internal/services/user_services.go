@@ -30,7 +30,7 @@ func NewUserService(repo repositories.UserRepository) UserService {
 func (s *UserServiceImpl) GetAllUsers() ([]models.UserResponse, error) {
 	usersDB, err := s.repo.GetAllUsers()
 	if err != nil {
-		return []models.UserResponse{}, fmt.Errorf("couldn't get users: %d", err)
+		return []models.UserResponse{}, fmt.Errorf("couldn't get users: %w", err)
 	}
 
 	var allUsers []models.UserResponse
@@ -52,7 +52,7 @@ func (s *UserServiceImpl) GetAllUsers() ([]models.UserResponse, error) {
 func (s *UserServiceImpl) GetUserByID(id string) (*models.UserResponse, error) {
 	userDB, err := s.repo.GetUserByID(id)
 	if err != nil {
-		return nil, fmt.Errorf("couldn't get user: %d", err)
+		return nil, fmt.Errorf("couldn't get user: %w", err)
 	}
 
 	userReq := models.UserResponse{
@@ -69,7 +69,7 @@ func (s *UserServiceImpl) CreateUser(userReq *models.User) (*models.UserResponse
 	// Hashing password
 	hashedPassword, err := hasher.HashPassword(userReq.Password)
 	if err != nil {
-		return nil, fmt.Errorf("error hashing password: %d", err)
+		return nil, fmt.Errorf("error hashing password: %w", err)
 	}
 
 	u := &gorm_models.User{
