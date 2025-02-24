@@ -3,10 +3,11 @@ package connection
 import (
 	"time"
 
-	"github.com/alex-arraga/backend_store/pkg/logger"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	gorm_logger "gorm.io/gorm/logger"
+
+	"github.com/alex-arraga/backend_store/pkg/logger"
 )
 
 var DB *gorm.DB
