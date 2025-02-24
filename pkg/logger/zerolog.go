@@ -16,9 +16,8 @@ func InitLogger(serviceName string) {
 	var multiWriter io.Writer
 	consoleWriter := zerolog.ConsoleWriter{Out: os.Stdout, TimeFormat: time.RFC3339}
 
-	// Config log rotation
-	saveLogsInFiles := os.Getenv("LOG_TO_FILE")
-	if saveLogsInFiles == "true" {
+	appEnv := os.Getenv("APP_ENV")
+	if appEnv == "production" {
 		logFile := &lumberjack.Logger{
 			Filename:   "logs/app.log",
 			MaxSize:    10,   // MB
@@ -26,8 +25,11 @@ func InitLogger(serviceName string) {
 			MaxAge:     30,   // Days before to delete old logs
 			Compress:   true, // Compress old logs
 		}
-		multiWriter = io.MultiWriter(consoleWriter, logFile)
+
+		// If appEnv is "production" logs will are saved in files and output will be JSON format
+		multiWriter = io.MultiWriter(os.Stdout, logFile)
 	} else {
+		// Otherwise, it is assumed that it is a “dev” environment and the logs will not be saved to files, the output will be Stdout
 		multiWriter = consoleWriter
 	}
 
