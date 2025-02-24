@@ -12,7 +12,7 @@ func LoadConfig() (port, dbConn string, e error) {
 
 	err := godotenv.Load(envFile)
 	if err != nil {
-		return "", "", fmt.Errorf("rrror loading .env: %d", err)
+		return "", "", fmt.Errorf("error loading .env: %d", err)
 	}
 
 	port, err = getEnv("PORT")
