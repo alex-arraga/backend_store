@@ -21,7 +21,7 @@ func GetAllUsersHandler(w http.ResponseWriter, r *http.Request, us services.User
 
 	allUses, err := us.GetAllUsers()
 	if err != nil {
-		jsonutil.RespondError(w, http.StatusInternalServerError, fmt.Sprintf("Error getting users: %d", err))
+		jsonutil.RespondError(w, http.StatusInternalServerError, fmt.Sprintf("Error getting users: %v", err))
 		return
 	}
 
@@ -80,7 +80,7 @@ func CreateUserHandler(w http.ResponseWriter, r *http.Request, us services.UserS
 
 	user, err := us.CreateUser(&userReq)
 	if err != nil {
-		jsonutil.RespondError(w, http.StatusBadRequest, fmt.Sprintf("Error creating user: %d", err))
+		jsonutil.RespondError(w, http.StatusBadRequest, fmt.Sprintf("Error creating user: %v", err))
 		return
 	}
 
@@ -122,7 +122,7 @@ func UpdateUserHandler(w http.ResponseWriter, r *http.Request, us services.UserS
 	// Call service
 	result, err := us.UpdateUser(requestingUserID, targetUserID, &userReq)
 	if err != nil {
-		jsonutil.RespondError(w, http.StatusInternalServerError, fmt.Sprintf("Error updating user: %d", err))
+		jsonutil.RespondError(w, http.StatusInternalServerError, fmt.Sprintf("Error updating user: %v", err))
 	}
 
 	userResponse := models.UserResponse{
@@ -144,7 +144,7 @@ func DeleteUserHandler(w http.ResponseWriter, r *http.Request, us services.UserS
 	}
 
 	if err := us.DeleteUserByID(userID); err != nil {
-		jsonutil.RespondError(w, http.StatusInternalServerError, fmt.Sprintf("Error deleting user: %d", err))
+		jsonutil.RespondError(w, http.StatusInternalServerError, fmt.Sprintf("Error deleting user: %v", err))
 		return
 	}
 
