@@ -1,8 +1,6 @@
 package handlers
 
 import (
-	"context"
-	"fmt"
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
@@ -12,22 +10,22 @@ import (
 	"github.com/alex-arraga/backend_store/pkg/logger"
 )
 
-type contextKey string
-
-const providerKey contextKey = "provider"
-
+// Handler to managaments Google respond after authentication
 func GetAuthCallback(w http.ResponseWriter, r *http.Request) {
 	provider := chi.URLParam(r, "provider")
-
-	r = r.WithContext(context.WithValue(context.Background(), providerKey, provider))
-
-	user, err := gothic.CompleteUserAuth(w, r)
-	if err != nil {
-		fmt.Fprintln(w, err)
+	if provider == "" {
+		logger.UseLogger().Error().Str("module", "handlers").Str("nameFunc", "GetAuthCallback").Msg("Missing provider in OAuth process")
+		jsonutil.RespondError(w, http.StatusBadRequest, "Missing provider")
 		return
 	}
 
-	fmt.Print(user)
+	user, err := gothic.CompleteUserAuth(w, r)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusUnauthorized)
+		return
+	}
+
+	logger.UseLogger().Info().Msgf("User authenticated %v", user)
 
 	// Redirect when auth successfully
 	http.Redirect(w, r, "http://localhost:5173/", http.StatusFound)
