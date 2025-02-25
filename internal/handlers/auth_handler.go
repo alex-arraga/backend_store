@@ -43,7 +43,7 @@ func GetAuthCallback(w http.ResponseWriter, r *http.Request) {
 func AuthLoginHandler(w http.ResponseWriter, r *http.Request) {
 	provider := chi.URLParam(r, "provider")
 	if provider == "" {
-		logger.UseLogger().Error().Msg("Missing provider in OAuth process")
+		logger.UseLogger().Error().Str("module", "handlers").Str("nameFunc", "AuthLoginHandler").Msg("Missing provider in OAuth process")
 		jsonutil.RespondError(w, http.StatusBadRequest, "Missing provider")
 		return
 	}
