@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"net/http"
+	"os"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/markbates/goth/gothic"
@@ -28,7 +29,14 @@ func GetAuthCallback(w http.ResponseWriter, r *http.Request) {
 	logger.UseLogger().Info().Msgf("User authenticated %v", user)
 
 	// Redirect when auth successfully
-	http.Redirect(w, r, "http://localhost:5173/", http.StatusFound)
+	clientURL := os.Getenv("CLIENT_REDIRECT_URL")
+	if clientURL == "" {
+		logger.UseLogger().Error().Str("module", "handlers").Str("var", "clientURL").Msg("Missing clientURL env")
+		jsonutil.RespondError(w, http.StatusInternalServerError, "Missing clientURL env")
+		return
+	}
+
+	http.Redirect(w, r, clientURL, http.StatusFound)
 }
 
 // Handler to starting OAuth login
