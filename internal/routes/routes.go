@@ -8,7 +8,6 @@ import (
 
 func MountRoutes(services *services.ServicesContainer) chi.Router {
 	r := chi.NewRouter()
-	// r.Use(middleware.Auth)
 
 	v1Router := chi.NewRouter()
 	v1Router.Mount("/user", userRoutes(services.UserSrv))
