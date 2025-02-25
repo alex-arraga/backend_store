@@ -3,11 +3,12 @@ package auth
 import (
 	"os"
 
-	"github.com/alex-arraga/backend_store/pkg/logger"
 	"github.com/gorilla/sessions"
 	"github.com/markbates/goth"
 	"github.com/markbates/goth/gothic"
 	"github.com/markbates/goth/providers/google"
+
+	"github.com/alex-arraga/backend_store/pkg/logger"
 )
 
 // TODO: secretKey and appEnv should be held from an .env file
