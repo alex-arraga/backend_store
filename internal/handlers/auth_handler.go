@@ -27,5 +27,5 @@ func GetAuthCallback(w http.ResponseWriter, r *http.Request) {
 	fmt.Print(user)
 
 	// Redirect when auth successfully
-	http.Redirect(w, r, "http://localhost:8000/", http.StatusFound)
+	http.Redirect(w, r, "http://localhost:5173/", http.StatusFound)
 }
