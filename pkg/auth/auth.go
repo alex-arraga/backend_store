@@ -30,12 +30,14 @@ func NewAuth() {
 
 	store := sessions.NewCookieStore([]byte(secretKey))
 	store.MaxAge(MaxAge)
-
 	store.Options.Path = "/"
 	store.Options.HttpOnly = true
 	store.Options.Secure = appEnv
 
+	// Assign session storage to Gothic
 	gothic.Store = store
+
+	// Config OAuth providers
 	goth.UseProviders(
 		google.New(googleClientID, googleClientSecret, callbackURL, "email", "profile"),
 	)

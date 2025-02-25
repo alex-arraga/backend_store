@@ -11,7 +11,7 @@ import (
 func authRoutes() chi.Router {
 	r := chi.NewRouter()
 
-	r.Get("/{provider}", func(w http.ResponseWriter, r *http.Request) {
+	r.Get("/", func(w http.ResponseWriter, r *http.Request) {
 		handlers.GetAuthCallback(w, r)
 	})
 
