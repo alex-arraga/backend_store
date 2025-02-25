@@ -5,10 +5,11 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/alex-arraga/backend_store/pkg/jsonutil"
-	"github.com/alex-arraga/backend_store/pkg/logger"
 	"github.com/go-chi/chi/v5"
 	"github.com/markbates/goth/gothic"
+
+	"github.com/alex-arraga/backend_store/pkg/jsonutil"
+	"github.com/alex-arraga/backend_store/pkg/logger"
 )
 
 type contextKey string
@@ -32,6 +33,7 @@ func GetAuthCallback(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "http://localhost:5173/", http.StatusFound)
 }
 
+// Handler to starting OAuth login
 func AuthLoginHandler(w http.ResponseWriter, r *http.Request) {
 	provider := chi.URLParam(r, "provider")
 	if provider == "" {
