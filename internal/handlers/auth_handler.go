@@ -12,7 +12,7 @@ import (
 )
 
 // Handler to managaments Google respond after authentication
-func GetAuthCallback(w http.ResponseWriter, r *http.Request) {
+func GetAuthCallbackHandler(w http.ResponseWriter, r *http.Request) {
 	provider := chi.URLParam(r, "provider")
 	if provider == "" {
 		logger.UseLogger().Error().Str("module", "handlers").Str("nameFunc", "GetAuthCallback").Msg("Missing provider in OAuth process")
@@ -40,7 +40,7 @@ func GetAuthCallback(w http.ResponseWriter, r *http.Request) {
 }
 
 // Handler to starting OAuth login
-func AuthLoginHandler(w http.ResponseWriter, r *http.Request) {
+func BeginAuthLoginHandler(w http.ResponseWriter, r *http.Request) {
 	provider := chi.URLParam(r, "provider")
 	if provider == "" {
 		logger.UseLogger().Error().Str("module", "handlers").Str("nameFunc", "AuthLoginHandler").Msg("Missing provider in OAuth process")
@@ -50,6 +50,7 @@ func AuthLoginHandler(w http.ResponseWriter, r *http.Request) {
 
 	logger.UseLogger().Info().Msgf("Starting authentication with %s ", provider)
 
-	// Automatically redirects to Google for user authentication
+	// BeginAuthHandler expects received a query parameter with the provider. Ex: localhost:8000/auth?provider=google
+	// then automatically redirects to Google for finish user authentication
 	gothic.BeginAuthHandler(w, r)
 }

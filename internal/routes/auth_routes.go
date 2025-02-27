@@ -22,12 +22,12 @@ func authRoutes() chi.Router {
 	})
 
 	r.Get("/{provider}/login", func(w http.ResponseWriter, r *http.Request) {
-		handlers.AuthLoginHandler(w, r)
+		handlers.BeginAuthLoginHandler(w, r)
 	})
 
 	// Receives Google response and get the authenticated user
 	r.Get("/{provider}/callback", func(w http.ResponseWriter, r *http.Request) {
-		handlers.GetAuthCallback(w, r)
+		handlers.GetAuthCallbackHandler(w, r)
 	})
 
 	return r
