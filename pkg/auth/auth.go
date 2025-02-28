@@ -11,30 +11,42 @@ import (
 	"github.com/alex-arraga/backend_store/pkg/logger"
 )
 
+type GoogleOpts struct {
+	ClientID     string
+	ClientSecret string
+}
+
 type Opts struct {
-	GoogleClientID     string
-	GoogleClientSecret string
-	CallbackURL        string
-	SecretKey          string
-	MaxAge             int
-	HttpOnly           bool
-	SecureMode         bool
+	SecretKey   string
+	MaxAge      int
+	HttpOnly    bool
+	SecureMode  bool
+	CallbackURL string
+	Google      GoogleOpts
 }
 
 type Config struct {
 	opts Opts
 }
 
-func loadOptions() Opts {
-	// Google opts
+func loadGoogleOpts() *GoogleOpts {
 	googleClientID := os.Getenv("GOOGLE_CLIENT_ID")
 	googleClientSecret := os.Getenv("GOOGLE_CLIENT_SECRET")
-	callbackURL := os.Getenv("GOOGLE_CALLBACK_URL")
 
-	if googleClientID == "" || googleClientSecret == "" || callbackURL == "" {
-		logger.UseLogger().Fatal().Msg("Missing required environment variables: GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, CALLBACK_URL")
-		panic("Missing required environment variables: GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, CALLBACK_URL")
+	if googleClientID == "" || googleClientSecret == "" {
+		logger.UseLogger().Fatal().Msg("Missing required environment variables: GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET")
+		panic("Missing required environment variables: GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET")
 	}
+
+	return &GoogleOpts{
+		ClientID:     googleClientID,
+		ClientSecret: googleClientSecret,
+	}
+}
+
+func loadOptions() Opts {
+	// Google opts
+	googleOpts := loadGoogleOpts()
 
 	// App enviroment opts
 	var isProd bool
@@ -42,10 +54,11 @@ func loadOptions() Opts {
 
 	secretKey := os.Getenv("SECRET_KEY")
 	appEnv := os.Getenv("APP_ENV")
+	callbackURL := os.Getenv("GOOGLE_CALLBACK_URL")
 
-	if secretKey == "" || appEnv == "" {
-		logger.UseLogger().Fatal().Msg("Missing required enviroment variables: SECRET_KEY or APP_ENV")
-		panic("Missing required environment variables: SECRET_KEY or APP_ENV")
+	if secretKey == "" || appEnv == "" || callbackURL == "" {
+		logger.UseLogger().Fatal().Msg("Missing required enviroment variables: SECRET_KEY, APP_ENV, CALLBACK_URL")
+		panic("Missing required environment variables: SECRET_KEY, APP_ENV, CALLBACK_URL")
 	}
 
 	// If application is in "dev" enviroment, isProd will be false, otherwise it will be true
@@ -63,13 +76,15 @@ func loadOptions() Opts {
 	}
 
 	return Opts{
-		GoogleClientID:     googleClientID,
-		GoogleClientSecret: googleClientSecret,
-		CallbackURL:        callbackURL,
-		MaxAge:             86400 * 30,
-		SecretKey:          secretKey,
-		SecureMode:         isProd,
-		HttpOnly:           httpOnly,
+		MaxAge:      86400 * 30,
+		SecretKey:   secretKey,
+		SecureMode:  isProd,
+		HttpOnly:    httpOnly,
+		CallbackURL: callbackURL,
+		Google: GoogleOpts{
+			ClientID:     googleOpts.ClientID,
+			ClientSecret: googleOpts.ClientSecret,
+		},
 	}
 }
 
@@ -97,6 +112,6 @@ func NewAuth() {
 
 	// Config OAuth providers
 	goth.UseProviders(
-		google.New(config.opts.GoogleClientID, config.opts.GoogleClientSecret, config.opts.CallbackURL, "email", "profile"),
+		google.New(config.opts.Google.ClientID, config.opts.Google.ClientSecret, config.opts.CallbackURL, "email", "profile"),
 	)
 }
