@@ -48,7 +48,23 @@ func BeginAuthLoginHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	logger.UseLogger().Info().Msgf("Starting authentication with %s ", provider)
+	// Get session and save provider
+	sess, err := gothic.Store.Get(r, "auth-session")
+	if err != nil {
+		logger.UseLogger().Error().Str("module", "handlers").Str("error", err.Error()).Msg("Failed to get session")
+		http.Error(w, "Failed to get session", http.StatusInternalServerError)
+		return
+	}
+
+	sess.Values["provider"] = provider
+	err = sess.Save(r, w)
+	if err != nil {
+		logger.UseLogger().Error().Str("module", "handlers").Str("error", err.Error()).Msg("Failed to save session")
+		http.Error(w, "Failed to save session", http.StatusInternalServerError)
+		return
+	}
+
+	logger.UseLogger().Debug().Msgf("Starting authentication with %s ", provider)
 
 	// BeginAuthHandler expects received a query parameter with the provider. Ex: localhost:8000/auth?provider=google
 	// then automatically redirects to Google for finish user authentication
