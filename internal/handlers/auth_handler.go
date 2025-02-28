@@ -20,8 +20,25 @@ func GetAuthCallbackHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Recover session before to complete authentication
+	sess, err := gothic.Store.Get(r, "auth-session")
+	if err != nil {
+		logger.UseLogger().Error().Str("module", "handlers").Str("error", err.Error()).Msg("Failed to get session")
+		http.Error(w, "Failed to get session", http.StatusInternalServerError)
+		return
+	}
+
+	// Ensure that the provider in saved session is the same as the URL
+	savedProvider, ok := sess.Values["provider"].(string)
+	if !ok || savedProvider != provider {
+		logger.UseLogger().Error().Str("module", "handlers").Str("nameFunc", "GetAuthCallback").Msg("Provider mismatch in session")
+		http.Error(w, "Provider mismatch in session", http.StatusUnauthorized)
+		return
+	}
+
 	user, err := gothic.CompleteUserAuth(w, r)
 	if err != nil {
+		logger.UseLogger().Error().Str("module", "handlers").Str("nameFunc", "GetAuthCallback").Str("error", err.Error()).Msg("OAuth authentication failed")
 		http.Error(w, err.Error(), http.StatusUnauthorized)
 		return
 	}
