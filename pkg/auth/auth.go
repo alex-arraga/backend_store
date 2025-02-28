@@ -48,14 +48,14 @@ func loadOptions() Opts {
 		panic("Missing required environment variables: SECRET_KEY or APP_ENV")
 	}
 
-	// If application are in "dev" enviroment, isProd will be false, otherwise will be true
+	// If application is in "dev" enviroment, isProd will be false, otherwise it will be true
 	if appEnv == "dev" {
 		isProd = false
 	} else {
 		isProd = true
 	}
 
-	// If application are in "dev" enviroment, httpOnly will be true, otherwise will be false
+	// If application is in "dev" enviroment, httpOnly will be true, otherwise it will be false
 	if isProd {
 		httpOnly = false
 	} else {
