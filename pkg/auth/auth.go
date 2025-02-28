@@ -16,7 +16,7 @@ import (
 const (
 	secretKey = "randomString"
 	MaxAge    = 86400 * 30 // 30 days
-	appEnv    = false
+	IsProd    = false
 )
 
 func NewAuth() {
@@ -29,10 +29,12 @@ func NewAuth() {
 	}
 
 	store := sessions.NewCookieStore([]byte(secretKey))
-	store.MaxAge(MaxAge)
-	store.Options.Path = "/"
-	store.Options.HttpOnly = true
-	store.Options.Secure = appEnv
+	store.Options = &sessions.Options{
+		Path:     "/",
+		MaxAge:   MaxAge,
+		HttpOnly: true,
+		Secure:   IsProd,
+	}
 
 	// Assign session storage to Gothic
 	gothic.Store = store
