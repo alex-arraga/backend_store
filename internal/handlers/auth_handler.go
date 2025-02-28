@@ -26,7 +26,7 @@ func GetAuthCallbackHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	logger.UseLogger().Info().Msgf("User authenticated %v", user)
+	logger.UseLogger().Info().Msgf("User authenticated \n %v", user)
 
 	// Redirect when auth successfully
 	clientURL := os.Getenv("CLIENT_REDIRECT_URL")

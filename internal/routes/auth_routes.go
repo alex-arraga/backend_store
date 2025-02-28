@@ -1,24 +1,24 @@
 package routes
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
 
 	"github.com/alex-arraga/backend_store/internal/handlers"
-	"github.com/alex-arraga/backend_store/pkg/jsonutil"
 )
 
 func authRoutes() chi.Router {
 	r := chi.NewRouter()
 
 	r.Get("/", func(w http.ResponseWriter, r *http.Request) {
-		jsonutil.RespondJSON(w, http.StatusOK, "Auth routes mounted", struct{}{})
+		fmt.Fprint(w, "Route /auth - OK")
 	})
 
 	// Inits authentication process with Gothic
 	r.Get("/{provider}", func(w http.ResponseWriter, r *http.Request) {
-		jsonutil.RespondJSON(w, http.StatusOK, "Provider route", struct{}{})
+		fmt.Fprint(w, "Route /auth/{provider} - OK")
 	})
 
 	r.Get("/{provider}/login", func(w http.ResponseWriter, r *http.Request) {
