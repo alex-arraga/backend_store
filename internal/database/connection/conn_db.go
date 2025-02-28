@@ -1,12 +1,13 @@
 package connection
 
 import (
-	"log"
 	"time"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
-	"gorm.io/gorm/logger"
+	gorm_logger "gorm.io/gorm/logger"
+
+	"github.com/alex-arraga/backend_store/pkg/logger"
 )
 
 var DB *gorm.DB
@@ -14,16 +15,16 @@ var DB *gorm.DB
 func ConnectDatabase(connStr string) (*gorm.DB, error) {
 	// Connection to db using GORM
 	conn, err := gorm.Open(postgres.Open(connStr), &gorm.Config{
-		Logger: logger.Default.LogMode(logger.Info),
+		Logger: gorm_logger.Default.LogMode(gorm_logger.Info),
 	})
 	if err != nil {
-		log.Fatalf("Error connecting database: %d", err)
+		logger.UseLogger().Fatal().Err(err).Msg("Error connecting database")
 	}
 
 	// Low level connection
 	sqlDB, err := conn.DB()
 	if err != nil {
-		log.Fatalf("Error returning DB pointer: %d", err)
+		logger.UseLogger().Fatal().Err(err).Msg("Error returning sql DB pointer")
 	}
 
 	// Pool connections config
@@ -31,7 +32,7 @@ func ConnectDatabase(connStr string) (*gorm.DB, error) {
 	sqlDB.SetMaxIdleConns(5)
 	sqlDB.SetConnMaxLifetime(5 * time.Minute)
 
-	log.Print("Database connection established")
+	logger.UseLogger().Info().Msg("Database connection established")
 	DB = conn
 
 	return DB, nil

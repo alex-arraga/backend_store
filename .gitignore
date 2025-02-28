@@ -17,6 +17,13 @@
 # Go workspace file
 go.work
 go.work.sum
+TODO.md
+
+# Client folder
+client
+
+# vs code config
+.vscode
 
 # env file
 .env
