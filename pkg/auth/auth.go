@@ -45,10 +45,10 @@ func loadGoogleOpts() *GoogleOpts {
 }
 
 func loadOptions() Opts {
-	// Google opts
+	// Load OAuth providers options
 	googleOpts := loadGoogleOpts()
 
-	// App enviroment opts
+	// Application enviroment opts
 	var isProd bool
 	var httpOnly bool
 
