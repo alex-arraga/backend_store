@@ -1,7 +1,6 @@
 package routes
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
@@ -12,15 +11,7 @@ import (
 func authRoutes() chi.Router {
 	r := chi.NewRouter()
 
-	r.Get("/", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprint(w, "Route /auth - OK")
-	})
-
-	// Inits authentication process with Gothic
-	r.Get("/{provider}", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprint(w, "Route /auth/{provider} - OK")
-	})
-
+	// Starts OAuth login
 	r.Get("/{provider}/login", func(w http.ResponseWriter, r *http.Request) {
 		handlers.BeginAuthLoginHandler(w, r)
 	})
