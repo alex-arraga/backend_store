@@ -9,6 +9,7 @@ import (
 
 	"github.com/alex-arraga/backend_store/internal/models"
 	"github.com/alex-arraga/backend_store/internal/services"
+	"github.com/alex-arraga/backend_store/pkg/hasher"
 	"github.com/alex-arraga/backend_store/pkg/jsonutil"
 )
 
@@ -48,7 +49,7 @@ func GetUserByIDHandler(w http.ResponseWriter, r *http.Request, us services.User
 // path: /user - POST
 func CreateUserHandler(w http.ResponseWriter, r *http.Request, us services.UserService) {
 	type parameters struct {
-		Name     string `json:"name"`
+		FullName string `json:"fullname"`
 		Email    string `json:"email"`
 		Password string `json:"password"`
 	}
@@ -59,8 +60,8 @@ func CreateUserHandler(w http.ResponseWriter, r *http.Request, us services.UserS
 		return
 	}
 
-	if params.Name == "" {
-		jsonutil.RespondError(w, http.StatusBadRequest, "Name is required")
+	if params.FullName == "" {
+		jsonutil.RespondError(w, http.StatusBadRequest, "FullName is required")
 		return
 	}
 	if params.Email == "" {
@@ -72,19 +73,26 @@ func CreateUserHandler(w http.ResponseWriter, r *http.Request, us services.UserS
 		return
 	}
 
-	userReq := models.User{
-		// Name:     params.Name,
-		Email: params.Email,
-		// Password: params.Password,
+	// Hashing password
+	hashedPassword, err := hasher.HashPassword(params.Password)
+	if err != nil {
+		jsonutil.RespondError(w, http.StatusBadRequest, "Error hashing password")
+		return
 	}
 
-	// user, err := us.CreateUser(&userReq)
-	// if err != nil {
-	// 	jsonutil.RespondError(w, http.StatusBadRequest, fmt.Sprintf("Error creating user: %v", err))
-	// 	return
-	// }
+	u := models.User{
+		FullName:     params.FullName,
+		Email:        params.Email,
+		PasswordHash: hashedPassword,
+	}
 
-	jsonutil.RespondJSON(w, http.StatusOK, "User created successfully", userReq)
+	user, err := us.RegisterWithEmailAndPassword(&u)
+	if err != nil {
+		jsonutil.RespondError(w, http.StatusBadRequest, fmt.Sprintf("Error creating user: %v", err))
+		return
+	}
+
+	jsonutil.RespondJSON(w, http.StatusOK, "User created successfully", user)
 }
 
 // path /user/{targetUserID} - PUT
