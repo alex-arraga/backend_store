@@ -13,8 +13,8 @@ type User struct {
 	EmailVerified bool      `gorm:"default:false"`
 	PasswordHash  *string   `gorm:"size:255;default:null"`
 	Provider      string    `gorm:"default:local"`
-	ProviderID    *string
-	AvatarURL     *string
+	ProviderID    *string   `gorm:"size:255;default:null"`
+	AvatarURL     *string   `gorm:"size:255;default:null"`
 	Role          string    `gorm:"size:10;not null;default:user"`
 	CreatedAt     time.Time `gorm:"autoCreateTime"`
 	UpdatedAt     time.Time `gorm:"autoUpdateTime"`

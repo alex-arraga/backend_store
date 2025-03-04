@@ -73,9 +73,9 @@ func CreateUserHandler(w http.ResponseWriter, r *http.Request, us services.UserS
 	}
 
 	userReq := models.User{
-		Name:     params.Name,
+		// Name:     params.Name,
 		Email:    params.Email,
-		Password: params.Password,
+		// Password: params.Password,
 	}
 
 	user, err := us.CreateUser(&userReq)
@@ -103,9 +103,9 @@ func UpdateUserHandler(w http.ResponseWriter, r *http.Request, us services.UserS
 	}
 
 	userReq := models.UpdateUser{
-		Name:     params.Name,
+		// Name:     params.Name,
 		Email:    params.Email,
-		Password: params.Password,
+		// Password: params.Password,
 		Role:     params.Role,
 	}
 
@@ -127,7 +127,7 @@ func UpdateUserHandler(w http.ResponseWriter, r *http.Request, us services.UserS
 
 	userResponse := models.UserResponse{
 		ID:    result.ID,
-		Name:  result.Name,
+		// Name:  result.Name,
 		Email: result.Email,
 		Role:  result.Role,
 	}

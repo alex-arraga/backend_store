@@ -6,23 +6,30 @@ import (
 
 // Models to entry data
 type User struct {
-	ID       uuid.UUID `json:"id"`
-	Name     string    `json:"name"`
-	Email    string    `json:"email"`
-	Password string    `json:"password"`
+	ID            uuid.UUID `json:"id"`
+	FullName      string    `json:"fullname"`
+	Email         string    `json:"email"`
+	EmailVerified bool      `json:"email_verified"`
+	PasswordHash  string    `json:"password_hash"`
+	Provider      string    `json:"provider"`
 }
 
 type UpdateUser struct {
-	Name     *string `json:"name,omitempty"`
-	Email    *string `json:"email,omitempty"`
-	Password *string `json:"password,omitempty"`
-	Role     *string `json:"role,omitempty"` // Si decides permitir cambiar roles
+	FullName     *string `json:"fullname,omitempty"`
+	Email        *string `json:"email,omitempty"`
+	PasswordHash *string `json:"password,omitempty"`
+	Role         *string `json:"role,omitempty"`
+	Provider     string  `json:"provider"`
+	ProviderID   *string `json:"provider_id,omitempty"`
+	AvatarURL    *string `json:"avatar,omitempty"`
 }
 
 // Models to output data
 type UserResponse struct {
-	ID    uuid.UUID `json:"id"`
-	Name  string    `json:"name"`
-	Email string    `json:"email"`
-	Role  string    `json:"role"`
+	ID        uuid.UUID `json:"id"`
+	FullName  string    `json:"fullname"`
+	Email     string    `json:"email"`
+	Role      string    `json:"role"`
+	Provider  string    `json:"provider"`
+	AvatarURL *string   `json:"avatar"`
 }
