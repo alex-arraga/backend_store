@@ -38,7 +38,7 @@ func (s *UserServiceImpl) GetAllUsers() ([]models.UserResponse, error) {
 	for _, user := range usersDB {
 		u := models.UserResponse{
 			ID:    user.ID,
-			Name:  user.Name,
+			Name:  user.FullName,
 			Email: user.Email,
 			Role:  user.Role,
 		}
@@ -57,7 +57,7 @@ func (s *UserServiceImpl) GetUserByID(id string) (*models.UserResponse, error) {
 
 	userReq := models.UserResponse{
 		ID:    userDB.ID,
-		Name:  userDB.Name,
+		Name:  userDB.FullName,
 		Email: userDB.Email,
 		Role:  userDB.Role,
 	}
@@ -73,10 +73,10 @@ func (s *UserServiceImpl) CreateUser(userReq *models.User) (*models.UserResponse
 	}
 
 	u := &gorm_models.User{
-		ID:       uuid.New(),
-		Name:     userReq.Name,
-		Email:    userReq.Email,
-		Password: &hashedPassword,
+		ID:           uuid.New(),
+		FullName:     userReq.Name,
+		Email:        userReq.Email,
+		PasswordHash: &hashedPassword,
 	}
 
 	// Send data to repository
@@ -87,7 +87,7 @@ func (s *UserServiceImpl) CreateUser(userReq *models.User) (*models.UserResponse
 
 	userResp := &models.UserResponse{
 		ID:    userDB.ID,
-		Name:  userDB.Name,
+		Name:  userDB.FullName,
 		Email: userDB.Email,
 		Role:  userDB.Role,
 	}
@@ -115,7 +115,7 @@ func (s *UserServiceImpl) UpdateUser(requestingUserID, targetUserID string, user
 
 	// Change just existing fields in the request
 	if userReq.Name != nil {
-		targetUser.Name = *userReq.Name
+		targetUser.FullName = *userReq.Name
 	}
 	if userReq.Email != nil {
 		targetUser.Email = *userReq.Email
@@ -125,7 +125,7 @@ func (s *UserServiceImpl) UpdateUser(requestingUserID, targetUserID string, user
 		if err != nil {
 			return nil, fmt.Errorf("failed hashing password: %w", err)
 		}
-		targetUser.Password = &hashedPassword
+		targetUser.PasswordHash = &hashedPassword
 	}
 
 	// Call repo and apply changes in db
@@ -136,7 +136,7 @@ func (s *UserServiceImpl) UpdateUser(requestingUserID, targetUserID string, user
 
 	u := models.UserResponse{
 		ID:    updatedUser.ID,
-		Name:  updatedUser.Name,
+		Name:  updatedUser.FullName,
 		Email: updatedUser.Email,
 		Role:  updatedUser.Role,
 	}

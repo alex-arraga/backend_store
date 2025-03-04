@@ -7,11 +7,15 @@ import (
 )
 
 type User struct {
-	ID        uuid.UUID `gorm:"type:uuid;primaryKey"`
-	Name      string    `gorm:"size:255;not null"`
-	Email     string    `gorm:"size:255;unique;not null"`
-	Password  *string   `gorm:"size:255;default:null"`
-	Role      string    `gorm:"size:10;not null;default:user"`
-	CreatedAT time.Time `gorm:"autoCreateTime"`
-	UpdatedAT time.Time `gorm:"autoUpdateTime"`
+	ID            uuid.UUID `gorm:"type:uuid;default:uuid_generate_v4();primaryKey"`
+	FullName      string    `gorm:"size:255;default:null"`
+	Email         string    `gorm:"uniqueIndex;not null"`
+	EmailVerified bool      `gorm:"default:false"`
+	PasswordHash  *string   `gorm:"size:255;default:null"`
+	Provider      string    `gorm:"default:local"`
+	ProviderID    *string
+	AvatarURL     *string
+	Role          string    `gorm:"size:10;not null;default:user"`
+	CreatedAt     time.Time `gorm:"autoCreateTime"`
+	UpdatedAt     time.Time `gorm:"autoUpdateTime"`
 }
