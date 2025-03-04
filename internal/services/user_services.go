@@ -95,7 +95,6 @@ func (s *UserServiceImpl) RegisterWithEmailAndPassword(userReq *models.User) (*m
 }
 
 func (s *UserServiceImpl) RegisterWithOAuth(user goth.User) (*models.UserResponse, error) {
-
 	fullName := fmt.Sprint(user.Name + " " + user.LastName)
 
 	// Converts goth.User (OAuth) to gorm_model.User, in order to be able to send it to the database
