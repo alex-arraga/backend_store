@@ -99,7 +99,7 @@ func BeginAuthLoginHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 // Handler to managaments Google respond after authentication
-func GetAuthCallbackHandler(w http.ResponseWriter, r *http.Request) {
+func GetAuthCallbackHandler(w http.ResponseWriter, r *http.Request, us services.UserService) {
 	provider := chi.URLParam(r, "provider")
 	if provider == "" {
 		logger.UseLogger().Error().Str("module", "handlers").Str("nameFunc", "GetAuthCallback").Msg("Missing provider in OAuth process")
@@ -123,14 +123,26 @@ func GetAuthCallbackHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user, err := gothic.CompleteUserAuth(w, r)
+	gothUser, err := gothic.CompleteUserAuth(w, r)
 	if err != nil {
 		logger.UseLogger().Error().Str("module", "handlers").Str("nameFunc", "GetAuthCallback").Str("error", err.Error()).Msg("OAuth authentication failed")
 		http.Error(w, err.Error(), http.StatusUnauthorized)
 		return
 	}
 
-	logger.UseLogger().Info().Msgf("User authenticated \n %v", user)
+	logger.UseLogger().Debug().Msgf("User authenticated \n %v", gothUser)
+
+	// Send user data to User Service
+	user, err := us.RegisterWithOAuth(gothUser)
+	if err != nil {
+		jsonutil.RespondError(w, http.StatusInternalServerError, fmt.Sprintf("Error creating user: %v", err))
+		return
+	}
+
+	// Respond with JSON to check data if "APP_ENV" is dev
+	if os.Getenv("APP_ENV") == "dev" {
+		jsonutil.RespondJSON(w, http.StatusOK, "OAuth user register successfully", user)
+	}
 
 	// Redirect when auth successfully
 	clientURL := os.Getenv("CLIENT_REDIRECT_URL")

@@ -18,7 +18,7 @@ func authRoutes() chi.Router {
 
 	// Receives Google response and get the authenticated user
 	r.Get("/{provider}/callback", func(w http.ResponseWriter, r *http.Request) {
-		handlers.GetAuthCallbackHandler(w, r)
+		// handlers.GetAuthCallbackHandler(w, r)
 	})
 
 	return r
