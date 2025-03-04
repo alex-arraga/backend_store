@@ -14,7 +14,8 @@ import (
 type UserService interface {
 	GetAllUsers() ([]models.UserResponse, error)
 	GetUserByID(id string) (*models.UserResponse, error)
-	CreateUser(user *models.User) (*models.UserResponse, error)
+	RegisterWithEmailAndPassword(userReq *models.User) (*models.UserResponse, error)
+	// TODO: LoginWithOAuth(userReq *models.User) (*models.UserResponse, error)
 	UpdateUser(requestingUserID, targetUserID string, userReq *models.UpdateUser) (*models.UserResponse, error)
 	DeleteUserByID(id string) error
 }
@@ -65,7 +66,7 @@ func (s *UserServiceImpl) GetUserByID(id string) (*models.UserResponse, error) {
 	return &userReq, nil
 }
 
-func (s *UserServiceImpl) CreateUser(userReq *models.User) (*models.UserResponse, error) {
+func (s *UserServiceImpl) RegisterWithEmailAndPassword(userReq *models.User) (*models.UserResponse, error) {
 	// Hashing password
 	hashedPassword, err := hasher.HashPassword(userReq.PasswordHash)
 	if err != nil {
@@ -73,10 +74,12 @@ func (s *UserServiceImpl) CreateUser(userReq *models.User) (*models.UserResponse
 	}
 
 	u := &gorm_models.User{
-		ID: uuid.New(),
-		// FullName:     userReq.Name,
-		Email:        userReq.Email,
+		ID:       uuid.New(),
+		FullName: userReq.FullName,
+		Email:    userReq.Email,
+		// EmailVerified: false,
 		PasswordHash: &hashedPassword,
+		// Provider: "local",
 	}
 
 	// Send data to repository
@@ -86,10 +89,11 @@ func (s *UserServiceImpl) CreateUser(userReq *models.User) (*models.UserResponse
 	}
 
 	userResp := &models.UserResponse{
-		ID: userDB.ID,
-		// Name:  userDB.FullName,
-		Email: userDB.Email,
-		Role:  userDB.Role,
+		ID:       userDB.ID,
+		FullName: userDB.FullName,
+		Email:    userDB.Email,
+		Role:     userDB.Role,
+		Provider: userDB.Provider,
 	}
 
 	return userResp, nil

@@ -78,13 +78,13 @@ func CreateUserHandler(w http.ResponseWriter, r *http.Request, us services.UserS
 		// Password: params.Password,
 	}
 
-	user, err := us.CreateUser(&userReq)
-	if err != nil {
-		jsonutil.RespondError(w, http.StatusBadRequest, fmt.Sprintf("Error creating user: %v", err))
-		return
-	}
+	// user, err := us.CreateUser(&userReq)
+	// if err != nil {
+	// 	jsonutil.RespondError(w, http.StatusBadRequest, fmt.Sprintf("Error creating user: %v", err))
+	// 	return
+	// }
 
-	jsonutil.RespondJSON(w, http.StatusOK, "User created successfully", user)
+	jsonutil.RespondJSON(w, http.StatusOK, "User created successfully", userReq)
 }
 
 // path /user/{targetUserID} - PUT
