@@ -8,7 +8,6 @@ import (
 	"github.com/alex-arraga/backend_store/internal/database/gorm_models"
 	"github.com/alex-arraga/backend_store/internal/models"
 	"github.com/alex-arraga/backend_store/internal/repositories"
-	"github.com/alex-arraga/backend_store/pkg/hasher"
 )
 
 type UserService interface {
@@ -67,18 +66,12 @@ func (s *UserServiceImpl) GetUserByID(id string) (*models.UserResponse, error) {
 }
 
 func (s *UserServiceImpl) RegisterWithEmailAndPassword(userReq *models.User) (*models.UserResponse, error) {
-	// Hashing password
-	hashedPassword, err := hasher.HashPassword(userReq.PasswordHash)
-	if err != nil {
-		return nil, fmt.Errorf("error hashing password: %w", err)
-	}
-
 	u := &gorm_models.User{
 		ID:       uuid.New(),
 		FullName: userReq.FullName,
 		Email:    userReq.Email,
 		// EmailVerified: false,
-		PasswordHash: &hashedPassword,
+		PasswordHash: &userReq.PasswordHash,
 		// Provider: "local",
 	}
 
