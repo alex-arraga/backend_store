@@ -9,12 +9,14 @@ import (
 func migrate(models ...interface{}) {
 	for _, model := range models {
 		if err := connection.DB.AutoMigrate(model); err != nil {
-			logger.UseLogger().Fatal().Err(err).Msg("Error executing migrations")
+			logger.UseLogger().Fatal().Err(err).Str("module", "database").Msg("Error executing migrations")
 		}
 	}
-	logger.UseLogger().Info().Msg("Migrations successfully executed")
+	logger.UseLogger().Debug().Str("module", "database").Msg("Migrations successfully executed")
 }
 
 func ExecMigrations() {
-	migrate(&gorm_models.User{})
+	migrate(
+		&gorm_models.User{},
+	)
 }
