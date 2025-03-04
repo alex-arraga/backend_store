@@ -1,15 +1,102 @@
 package handlers
 
 import (
+	"fmt"
 	"net/http"
 	"os"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/markbates/goth/gothic"
 
+	"github.com/alex-arraga/backend_store/internal/models"
+	"github.com/alex-arraga/backend_store/internal/services"
+	"github.com/alex-arraga/backend_store/pkg/hasher"
 	"github.com/alex-arraga/backend_store/pkg/jsonutil"
 	"github.com/alex-arraga/backend_store/pkg/logger"
 )
+
+// * Local register handler - path: /v1/auth
+// Register in the local application using an email and password
+func RegisterUserHandler(w http.ResponseWriter, r *http.Request, us services.UserService) {
+	type parameters struct {
+		FullName string `json:"fullname"`
+		Email    string `json:"email"`
+		Password string `json:"password"`
+	}
+
+	params, err := jsonutil.ParseRequestBody[parameters](r)
+	if err != nil {
+		jsonutil.RespondError(w, http.StatusBadRequest, fmt.Sprintf("Invalid input: %s", err))
+		return
+	}
+
+	if params.FullName == "" {
+		jsonutil.RespondError(w, http.StatusBadRequest, "FullName is required")
+		return
+	}
+	if params.Email == "" {
+		jsonutil.RespondError(w, http.StatusBadRequest, "Email is required")
+		return
+	}
+	if params.Password == "" {
+		jsonutil.RespondError(w, http.StatusBadRequest, "Password is required")
+		return
+	}
+
+	// Hashing password
+	hashedPassword, err := hasher.HashPassword(params.Password)
+	if err != nil {
+		jsonutil.RespondError(w, http.StatusBadRequest, "Error hashing password")
+		return
+	}
+
+	u := models.User{
+		FullName:     params.FullName,
+		Email:        params.Email,
+		PasswordHash: hashedPassword,
+	}
+
+	user, err := us.RegisterWithEmailAndPassword(&u)
+	if err != nil {
+		jsonutil.RespondError(w, http.StatusBadRequest, fmt.Sprintf("Error creating user: %v", err))
+		return
+	}
+
+	jsonutil.RespondJSON(w, http.StatusOK, "User created successfully", user)
+}
+
+// * OAuth handlers - path: /v1/auth/google/login?provider=google
+// Handler to starting OAuth login
+func BeginAuthLoginHandler(w http.ResponseWriter, r *http.Request) {
+	provider := chi.URLParam(r, "provider")
+	if provider == "" {
+		logger.UseLogger().Error().Str("module", "handlers").Str("nameFunc", "AuthLoginHandler").Msg("Missing provider in OAuth process")
+		jsonutil.RespondError(w, http.StatusBadRequest, "Missing provider")
+		return
+	}
+
+	// Get session and save provider
+	sess, err := gothic.Store.Get(r, "auth-session")
+	if err != nil {
+		logger.UseLogger().Error().Str("module", "handlers").Str("error", err.Error()).Msg("Failed to get session")
+		http.Error(w, "Failed to get session", http.StatusInternalServerError)
+		return
+	}
+
+	sess.Values["provider"] = provider
+	err = sess.Save(r, w)
+	if err != nil {
+		logger.UseLogger().Error().Str("module", "handlers").Str("error", err.Error()).Msg("Failed to save session")
+		http.Error(w, "Failed to save session", http.StatusInternalServerError)
+		return
+	}
+
+	logger.UseLogger().Debug().Msgf("Starting authentication with %s ", provider)
+
+	// BeginAuthHandler expects received a query parameter with the provider. Ex: localhost:8000/auth?provider=google
+	// then automatically redirects to Google for finish user authentication
+	gothic.BeginAuthHandler(w, r)
+}
 
 // Handler to managaments Google respond after authentication
 func GetAuthCallbackHandler(w http.ResponseWriter, r *http.Request) {
@@ -54,36 +141,4 @@ func GetAuthCallbackHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	http.Redirect(w, r, clientURL, http.StatusFound)
-}
-
-// Handler to starting OAuth login
-func BeginAuthLoginHandler(w http.ResponseWriter, r *http.Request) {
-	provider := chi.URLParam(r, "provider")
-	if provider == "" {
-		logger.UseLogger().Error().Str("module", "handlers").Str("nameFunc", "AuthLoginHandler").Msg("Missing provider in OAuth process")
-		jsonutil.RespondError(w, http.StatusBadRequest, "Missing provider")
-		return
-	}
-
-	// Get session and save provider
-	sess, err := gothic.Store.Get(r, "auth-session")
-	if err != nil {
-		logger.UseLogger().Error().Str("module", "handlers").Str("error", err.Error()).Msg("Failed to get session")
-		http.Error(w, "Failed to get session", http.StatusInternalServerError)
-		return
-	}
-
-	sess.Values["provider"] = provider
-	err = sess.Save(r, w)
-	if err != nil {
-		logger.UseLogger().Error().Str("module", "handlers").Str("error", err.Error()).Msg("Failed to save session")
-		http.Error(w, "Failed to save session", http.StatusInternalServerError)
-		return
-	}
-
-	logger.UseLogger().Debug().Msgf("Starting authentication with %s ", provider)
-
-	// BeginAuthHandler expects received a query parameter with the provider. Ex: localhost:8000/auth?provider=google
-	// then automatically redirects to Google for finish user authentication
-	gothic.BeginAuthHandler(w, r)
 }

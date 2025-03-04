@@ -9,7 +9,6 @@ import (
 
 	"github.com/alex-arraga/backend_store/internal/models"
 	"github.com/alex-arraga/backend_store/internal/services"
-	"github.com/alex-arraga/backend_store/pkg/hasher"
 	"github.com/alex-arraga/backend_store/pkg/jsonutil"
 )
 
@@ -44,55 +43,6 @@ func GetUserByIDHandler(w http.ResponseWriter, r *http.Request, us services.User
 	}
 
 	jsonutil.RespondJSON(w, http.StatusOK, "User successfully found", user)
-}
-
-// path: /user - POST
-func CreateUserHandler(w http.ResponseWriter, r *http.Request, us services.UserService) {
-	type parameters struct {
-		FullName string `json:"fullname"`
-		Email    string `json:"email"`
-		Password string `json:"password"`
-	}
-
-	params, err := jsonutil.ParseRequestBody[parameters](r)
-	if err != nil {
-		jsonutil.RespondError(w, http.StatusBadRequest, fmt.Sprintf("Invalid input: %s", err))
-		return
-	}
-
-	if params.FullName == "" {
-		jsonutil.RespondError(w, http.StatusBadRequest, "FullName is required")
-		return
-	}
-	if params.Email == "" {
-		jsonutil.RespondError(w, http.StatusBadRequest, "Email is required")
-		return
-	}
-	if params.Password == "" {
-		jsonutil.RespondError(w, http.StatusBadRequest, "Password is required")
-		return
-	}
-
-	// Hashing password
-	hashedPassword, err := hasher.HashPassword(params.Password)
-	if err != nil {
-		jsonutil.RespondError(w, http.StatusBadRequest, "Error hashing password")
-		return
-	}
-
-	u := models.User{
-		FullName:     params.FullName,
-		Email:        params.Email,
-		PasswordHash: hashedPassword,
-	}
-
-	user, err := us.RegisterWithEmailAndPassword(&u)
-	if err != nil {
-		jsonutil.RespondError(w, http.StatusBadRequest, fmt.Sprintf("Error creating user: %v", err))
-		return
-	}
-
-	jsonutil.RespondJSON(w, http.StatusOK, "User created successfully", user)
 }
 
 // path /user/{targetUserID} - PUT

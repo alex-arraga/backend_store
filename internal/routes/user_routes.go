@@ -22,7 +22,7 @@ func userRoutes(us services.UserService) chi.Router {
 	})
 
 	r.Post("/", func(w http.ResponseWriter, r *http.Request) {
-		handlers.CreateUserHandler(w, r, us)
+		// handlers.CreateUserHandler(w, r, us)
 	})
 
 	r.Put("/{targetUserID}", func(w http.ResponseWriter, r *http.Request) {
