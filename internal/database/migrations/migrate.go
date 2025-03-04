@@ -15,6 +15,12 @@ func migrate(models ...interface{}) {
 	logger.UseLogger().Debug().Str("module", "database").Msg("Migrations successfully executed")
 }
 
+// ! To Devs: Execute this function inside ExecMigrations to delete a table
+// func resetTables() {
+// 	table := &gorm_models.User{}
+// 	connection.DB.Migrator().DropTable(table)
+// }
+
 func ExecMigrations() {
 	migrate(
 		&gorm_models.User{},
