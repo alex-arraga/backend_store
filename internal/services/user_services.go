@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/google/uuid"
+	"github.com/markbates/goth"
 
 	"github.com/alex-arraga/backend_store/internal/database/gorm_models"
 	"github.com/alex-arraga/backend_store/internal/models"
@@ -14,7 +15,7 @@ type UserService interface {
 	GetAllUsers() ([]models.UserResponse, error)
 	GetUserByID(id string) (*models.UserResponse, error)
 	RegisterWithEmailAndPassword(userReq *models.User) (*models.UserResponse, error)
-	// TODO: LoginWithOAuth(userReq *models.User) (*models.UserResponse, error)
+	RegisterWithOAuth(user goth.User) (*models.UserResponse, error)
 	UpdateUser(requestingUserID, targetUserID string, userReq *models.UpdateUser) (*models.UserResponse, error)
 	DeleteUserByID(id string) error
 }
@@ -82,14 +83,49 @@ func (s *UserServiceImpl) RegisterWithEmailAndPassword(userReq *models.User) (*m
 	}
 
 	userResp := &models.UserResponse{
-		ID:       userDB.ID,
-		FullName: userDB.FullName,
-		Email:    userDB.Email,
-		Role:     userDB.Role,
-		Provider: userDB.Provider,
+		ID:        userDB.ID,
+		FullName:  userDB.FullName,
+		Email:     userDB.Email,
+		Role:      userDB.Role,
+		Provider:  userDB.Provider,
+		AvatarURL: userDB.AvatarURL,
 	}
 
 	return userResp, nil
+}
+
+func (s *UserServiceImpl) RegisterWithOAuth(user goth.User) (*models.UserResponse, error) {
+
+	fullName := fmt.Sprint(user.Name + " " + user.LastName)
+
+	// Converts goth.User (OAuth) to gorm_model.User, in order to be able to send it to the database
+	u := gorm_models.User{
+		ID:            uuid.New(),
+		FullName:      fullName,
+		Email:         user.Email,
+		EmailVerified: true,
+		Provider:      user.Provider,
+		ProviderID:    &user.UserID,
+		AvatarURL:     &user.AvatarURL,
+	}
+
+	// Send data to database
+	userDB, err := s.repo.CreateUser(&u)
+	if err != nil {
+		return &models.UserResponse{}, fmt.Errorf("")
+	}
+
+	// Converts gorm_model.User (database model) to models.UserResponse, in order to be able to send it to the client
+	userResponse := models.UserResponse{
+		ID:        userDB.ID,
+		FullName:  userDB.FullName,
+		Email:     userDB.Email,
+		Role:      userDB.Role,
+		Provider:  userDB.Provider,
+		AvatarURL: userDB.AvatarURL,
+	}
+
+	return &userResponse, nil
 }
 
 func (s *UserServiceImpl) UpdateUser(requestingUserID, targetUserID string, userReq *models.UpdateUser) (*models.UserResponse, error) {
