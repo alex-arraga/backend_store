@@ -37,7 +37,7 @@ func (s *UserServiceImpl) GetAllUsers() ([]models.UserResponse, error) {
 
 	for _, user := range usersDB {
 		u := models.UserResponse{
-			ID:    user.ID,
+			ID: user.ID,
 			// Name:  user.FullName,
 			Email: user.Email,
 			Role:  user.Role,
@@ -56,7 +56,7 @@ func (s *UserServiceImpl) GetUserByID(id string) (*models.UserResponse, error) {
 	}
 
 	userReq := models.UserResponse{
-		ID:    userDB.ID,
+		ID: userDB.ID,
 		// Name:  userDB.FullName,
 		Email: userDB.Email,
 		Role:  userDB.Role,
@@ -73,7 +73,7 @@ func (s *UserServiceImpl) CreateUser(userReq *models.User) (*models.UserResponse
 	}
 
 	u := &gorm_models.User{
-		ID:           uuid.New(),
+		ID: uuid.New(),
 		// FullName:     userReq.Name,
 		Email:        userReq.Email,
 		PasswordHash: &hashedPassword,
@@ -86,7 +86,7 @@ func (s *UserServiceImpl) CreateUser(userReq *models.User) (*models.UserResponse
 	}
 
 	userResp := &models.UserResponse{
-		ID:    userDB.ID,
+		ID: userDB.ID,
 		// Name:  userDB.FullName,
 		Email: userDB.Email,
 		Role:  userDB.Role,
@@ -135,7 +135,7 @@ func (s *UserServiceImpl) UpdateUser(requestingUserID, targetUserID string, user
 	}
 
 	u := models.UserResponse{
-		ID:    updatedUser.ID,
+		ID: updatedUser.ID,
 		// Name:  updatedUser.FullName,
 		Email: updatedUser.Email,
 		Role:  updatedUser.Role,

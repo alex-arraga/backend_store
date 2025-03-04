@@ -74,7 +74,7 @@ func CreateUserHandler(w http.ResponseWriter, r *http.Request, us services.UserS
 
 	userReq := models.User{
 		// Name:     params.Name,
-		Email:    params.Email,
+		Email: params.Email,
 		// Password: params.Password,
 	}
 
@@ -104,9 +104,9 @@ func UpdateUserHandler(w http.ResponseWriter, r *http.Request, us services.UserS
 
 	userReq := models.UpdateUser{
 		// Name:     params.Name,
-		Email:    params.Email,
+		Email: params.Email,
 		// Password: params.Password,
-		Role:     params.Role,
+		Role: params.Role,
 	}
 
 	// TODO: Get userID from context, auth middleware
@@ -126,7 +126,7 @@ func UpdateUserHandler(w http.ResponseWriter, r *http.Request, us services.UserS
 	}
 
 	userResponse := models.UserResponse{
-		ID:    result.ID,
+		ID: result.ID,
 		// Name:  result.Name,
 		Email: result.Email,
 		Role:  result.Role,
