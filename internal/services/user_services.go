@@ -3,10 +3,9 @@ package services
 import (
 	"fmt"
 
-	"github.com/google/uuid"
-	"github.com/markbates/goth"
+	// "github.com/google/uuid"
 
-	"github.com/alex-arraga/backend_store/internal/database/gorm_models"
+	// "github.com/alex-arraga/backend_store/internal/database/gorm_models"
 	"github.com/alex-arraga/backend_store/internal/models"
 	"github.com/alex-arraga/backend_store/internal/repositories"
 )
@@ -24,8 +23,6 @@ func newUserService(repo repositories.UserRepository) UserService {
 type UserService interface {
 	GetAllUsers() ([]models.UserResponse, error)
 	GetUserByID(id string) (*models.UserResponse, error)
-	RegisterWithEmailAndPassword(userReq *models.User) (*models.UserResponse, error)
-	RegisterWithOAuth(user goth.User) (*models.UserResponse, error)
 	UpdateUser(requestingUserID, targetUserID string, userReq *models.UpdateUser) (*models.UserResponse, error)
 	DeleteUserByID(id string) error
 }
@@ -66,67 +63,6 @@ func (s *userServiceImpl) GetUserByID(id string) (*models.UserResponse, error) {
 	}
 
 	return &userReq, nil
-}
-
-func (s *userServiceImpl) RegisterWithEmailAndPassword(userReq *models.User) (*models.UserResponse, error) {
-	u := &gorm_models.User{
-		ID:       uuid.New(),
-		FullName: userReq.FullName,
-		Email:    userReq.Email,
-		// EmailVerified: false,
-		PasswordHash: &userReq.PasswordHash,
-		// Provider: "local",
-	}
-
-	// Send data to repository
-	userDB, err := s.repo.CreateUser(u)
-	if err != nil {
-		return nil, fmt.Errorf("error creating user: %w", err)
-	}
-
-	userResp := &models.UserResponse{
-		ID:        userDB.ID,
-		FullName:  userDB.FullName,
-		Email:     userDB.Email,
-		Role:      userDB.Role,
-		Provider:  userDB.Provider,
-		AvatarURL: userDB.AvatarURL,
-	}
-
-	return userResp, nil
-}
-
-func (s *userServiceImpl) RegisterWithOAuth(user goth.User) (*models.UserResponse, error) {
-	fullName := fmt.Sprint(user.Name + " " + user.LastName)
-
-	// Converts goth.User (OAuth) to gorm_model.User, in order to be able to send it to the database
-	u := gorm_models.User{
-		ID:            uuid.New(),
-		FullName:      fullName,
-		Email:         user.Email,
-		EmailVerified: true,
-		Provider:      user.Provider,
-		ProviderID:    &user.UserID,
-		AvatarURL:     &user.AvatarURL,
-	}
-
-	// Send data to database
-	userDB, err := s.repo.CreateUser(&u)
-	if err != nil {
-		return &models.UserResponse{}, fmt.Errorf("")
-	}
-
-	// Converts gorm_model.User (database model) to models.UserResponse, in order to be able to send it to the client
-	userResponse := models.UserResponse{
-		ID:        userDB.ID,
-		FullName:  userDB.FullName,
-		Email:     userDB.Email,
-		Role:      userDB.Role,
-		Provider:  userDB.Provider,
-		AvatarURL: userDB.AvatarURL,
-	}
-
-	return &userResponse, nil
 }
 
 func (s *userServiceImpl) UpdateUser(requestingUserID, targetUserID string, userReq *models.UpdateUser) (*models.UserResponse, error) {
