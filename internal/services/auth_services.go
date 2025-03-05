@@ -3,11 +3,12 @@ package services
 import (
 	"fmt"
 
+	"github.com/google/uuid"
+	"github.com/markbates/goth"
+
 	"github.com/alex-arraga/backend_store/internal/database/gorm_models"
 	"github.com/alex-arraga/backend_store/internal/models"
 	"github.com/alex-arraga/backend_store/internal/repositories"
-	"github.com/google/uuid"
-	"github.com/markbates/goth"
 )
 
 type AuthServices interface {
