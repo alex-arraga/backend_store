@@ -14,10 +14,6 @@ type UserRepository interface {
 	DeleteUserByID(id string) error
 }
 
-type RepoConnection struct {
-	db *gorm.DB
-}
-
 func newUserRepo(db *gorm.DB) UserRepository {
 	return &RepoConnection{db: db}
 }

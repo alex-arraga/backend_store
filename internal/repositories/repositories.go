@@ -4,6 +4,9 @@ import (
 	"gorm.io/gorm"
 )
 
+type RepoConnection struct {
+	db *gorm.DB
+}
 type RepositoryContainer struct {
 	UserRepo UserRepository
 }
