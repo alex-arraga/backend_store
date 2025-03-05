@@ -15,7 +15,7 @@ import (
 	"github.com/alex-arraga/backend_store/pkg/logger"
 )
 
-// * Local register handler - path: /v1/auth
+// * Local register handler - path: /v1/auth/register
 // Register in the local application using an email and password
 func RegisterUserHandler(w http.ResponseWriter, r *http.Request, us services.UserService) {
 	type parameters struct {
@@ -62,7 +62,7 @@ func RegisterUserHandler(w http.ResponseWriter, r *http.Request, us services.Use
 		return
 	}
 
-	jsonutil.RespondJSON(w, http.StatusOK, "User created successfully", user)
+	jsonutil.RespondJSON(w, http.StatusOK, "User successfully registered", user)
 }
 
 // * OAuth handlers - path: /v1/auth/google/login?provider=google
@@ -135,13 +135,13 @@ func GetAuthCallbackHandler(w http.ResponseWriter, r *http.Request, us services.
 	// Send user data to User Service
 	user, err := us.RegisterWithOAuth(gothUser)
 	if err != nil {
-		jsonutil.RespondError(w, http.StatusInternalServerError, fmt.Sprintf("Error creating user: %v", err))
+		jsonutil.RespondError(w, http.StatusInternalServerError, fmt.Sprintf("Error creating user with OAuth: %v", err))
 		return
 	}
 
 	// Respond with JSON to check data if "APP_ENV" is dev
-	if os.Getenv("APP_ENV") == "dev" {
-		jsonutil.RespondJSON(w, http.StatusOK, "OAuth user register successfully", user)
+	if os.Getenv("APP_ENV") != "prod" {
+		jsonutil.RespondJSON(w, http.StatusOK, "User successfully registered with OAuth", user)
 	}
 
 	// Redirect when auth successfully
