@@ -1,8 +1,9 @@
 package repositories
 
 import (
-	"github.com/alex-arraga/backend_store/internal/database/gorm_models"
 	"gorm.io/gorm"
+
+	"github.com/alex-arraga/backend_store/internal/database/gorm_models"
 )
 
 type AuthRepository interface {
