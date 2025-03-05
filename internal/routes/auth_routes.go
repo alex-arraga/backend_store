@@ -9,12 +9,12 @@ import (
 	"github.com/alex-arraga/backend_store/internal/services"
 )
 
-func authRoutes(us services.UserService) chi.Router {
+func authRoutes(as services.AuthServices) chi.Router {
 	r := chi.NewRouter()
 
 	// Register using email and password
 	r.Post("/register", func(w http.ResponseWriter, r *http.Request) {
-		handlers.RegisterUserHandler(w, r, us)
+		handlers.RegisterUserHandler(w, r, as)
 	})
 
 	// Starts OAuth login
@@ -24,7 +24,7 @@ func authRoutes(us services.UserService) chi.Router {
 
 	// Receives Google response and get the authenticated user
 	r.Get("/{provider}/callback", func(w http.ResponseWriter, r *http.Request) {
-		handlers.GetAuthCallbackHandler(w, r, us)
+		handlers.GetAuthCallbackHandler(w, r, as)
 	})
 
 	return r

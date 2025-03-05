@@ -17,7 +17,7 @@ import (
 
 // * Local register handler - path: /v1/auth/register
 // Register in the local application using an email and password
-func RegisterUserHandler(w http.ResponseWriter, r *http.Request, us services.UserService) {
+func RegisterUserHandler(w http.ResponseWriter, r *http.Request, as services.AuthServices) {
 	type parameters struct {
 		FullName string `json:"fullname"`
 		Email    string `json:"email"`
@@ -56,13 +56,13 @@ func RegisterUserHandler(w http.ResponseWriter, r *http.Request, us services.Use
 		PasswordHash: hashedPassword,
 	}
 
-	user, err := us.RegisterWithEmailAndPassword(&u)
-	if err != nil {
-		jsonutil.RespondError(w, http.StatusBadRequest, fmt.Sprintf("Error creating user: %v", err))
-		return
-	}
+	// user, err := as.RegisterWithEmailAndPassword(&u)
+	// if err != nil {
+	// 	jsonutil.RespondError(w, http.StatusBadRequest, fmt.Sprintf("Error creating user: %v", err))
+	// 	return
+	// }
 
-	jsonutil.RespondJSON(w, http.StatusOK, "User successfully registered", user)
+	jsonutil.RespondJSON(w, http.StatusOK, "User successfully registered", u)
 }
 
 // * OAuth handlers - path: /v1/auth/google/login?provider=google
@@ -99,7 +99,7 @@ func BeginAuthLoginHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 // Handler to managaments Google respond after authentication
-func GetAuthCallbackHandler(w http.ResponseWriter, r *http.Request, us services.UserService) {
+func GetAuthCallbackHandler(w http.ResponseWriter, r *http.Request, as services.AuthServices) {
 	provider := chi.URLParam(r, "provider")
 	if provider == "" {
 		logger.UseLogger().Error().Str("module", "handlers").Str("nameFunc", "GetAuthCallback").Msg("Missing provider in OAuth process")
@@ -133,15 +133,15 @@ func GetAuthCallbackHandler(w http.ResponseWriter, r *http.Request, us services.
 	logger.UseLogger().Debug().Msgf("User authenticated \n %v", gothUser)
 
 	// Send user data to User Service
-	user, err := us.RegisterWithOAuth(gothUser)
-	if err != nil {
-		jsonutil.RespondError(w, http.StatusInternalServerError, fmt.Sprintf("Error creating user with OAuth: %v", err))
-		return
-	}
+	// user, err := as.RegisterWithOAuth(gothUser)
+	// if err != nil {
+	// 	jsonutil.RespondError(w, http.StatusInternalServerError, fmt.Sprintf("Error creating user with OAuth: %v", err))
+	// 	return
+	// }
 
 	// Respond with JSON to check data if "APP_ENV" is dev
 	if os.Getenv("APP_ENV") != "prod" {
-		jsonutil.RespondJSON(w, http.StatusOK, "User successfully registered with OAuth", user)
+		jsonutil.RespondJSON(w, http.StatusOK, "User successfully registered with OAuth", struct{}{})
 	}
 
 	// Redirect when auth successfully
