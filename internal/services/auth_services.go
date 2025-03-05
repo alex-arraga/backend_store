@@ -11,17 +11,19 @@ import (
 	"github.com/alex-arraga/backend_store/internal/repositories"
 )
 
-type AuthServices interface {
-	_RegisterWithEmailAndPassword(userReq *models.User) (*models.UserResponse, error)
-	_RegisterWithOAuth(user goth.User) (*models.UserResponse, error)
-}
-
+// Implementation and initialization of auth services that connect to the auth repository
 type authServiceImpl struct {
 	repo repositories.AuthRepository
 }
 
 func newAuthService(repo repositories.AuthRepository) AuthServices {
 	return &authServiceImpl{repo: repo}
+}
+
+// Methods of auth services
+type AuthServices interface {
+	_RegisterWithEmailAndPassword(userReq *models.User) (*models.UserResponse, error)
+	_RegisterWithOAuth(user goth.User) (*models.UserResponse, error)
 }
 
 func (s *authServiceImpl) _RegisterWithEmailAndPassword(userReq *models.User) (*models.UserResponse, error) {

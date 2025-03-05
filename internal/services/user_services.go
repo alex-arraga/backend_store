@@ -11,6 +11,16 @@ import (
 	"github.com/alex-arraga/backend_store/internal/repositories"
 )
 
+// Implementation and initialization of user services that connect to the user repository
+type userServiceImpl struct {
+	repo repositories.UserRepository
+}
+
+func newUserService(repo repositories.UserRepository) UserService {
+	return &userServiceImpl{repo: repo}
+}
+
+// Methods of user services
 type UserService interface {
 	GetAllUsers() ([]models.UserResponse, error)
 	GetUserByID(id string) (*models.UserResponse, error)
@@ -20,15 +30,7 @@ type UserService interface {
 	DeleteUserByID(id string) error
 }
 
-type UserServiceImpl struct {
-	repo repositories.UserRepository
-}
-
-func NewUserService(repo repositories.UserRepository) UserService {
-	return &UserServiceImpl{repo: repo}
-}
-
-func (s *UserServiceImpl) GetAllUsers() ([]models.UserResponse, error) {
+func (s *userServiceImpl) GetAllUsers() ([]models.UserResponse, error) {
 	usersDB, err := s.repo.GetAllUsers()
 	if err != nil {
 		return []models.UserResponse{}, fmt.Errorf("couldn't get users: %w", err)
@@ -50,7 +52,7 @@ func (s *UserServiceImpl) GetAllUsers() ([]models.UserResponse, error) {
 	return allUsers, nil
 }
 
-func (s *UserServiceImpl) GetUserByID(id string) (*models.UserResponse, error) {
+func (s *userServiceImpl) GetUserByID(id string) (*models.UserResponse, error) {
 	userDB, err := s.repo.GetUserByID(id)
 	if err != nil {
 		return nil, fmt.Errorf("couldn't get user: %w", err)
@@ -66,7 +68,7 @@ func (s *UserServiceImpl) GetUserByID(id string) (*models.UserResponse, error) {
 	return &userReq, nil
 }
 
-func (s *UserServiceImpl) RegisterWithEmailAndPassword(userReq *models.User) (*models.UserResponse, error) {
+func (s *userServiceImpl) RegisterWithEmailAndPassword(userReq *models.User) (*models.UserResponse, error) {
 	u := &gorm_models.User{
 		ID:       uuid.New(),
 		FullName: userReq.FullName,
@@ -94,7 +96,7 @@ func (s *UserServiceImpl) RegisterWithEmailAndPassword(userReq *models.User) (*m
 	return userResp, nil
 }
 
-func (s *UserServiceImpl) RegisterWithOAuth(user goth.User) (*models.UserResponse, error) {
+func (s *userServiceImpl) RegisterWithOAuth(user goth.User) (*models.UserResponse, error) {
 	fullName := fmt.Sprint(user.Name + " " + user.LastName)
 
 	// Converts goth.User (OAuth) to gorm_model.User, in order to be able to send it to the database
@@ -127,7 +129,7 @@ func (s *UserServiceImpl) RegisterWithOAuth(user goth.User) (*models.UserRespons
 	return &userResponse, nil
 }
 
-func (s *UserServiceImpl) UpdateUser(requestingUserID, targetUserID string, userReq *models.UpdateUser) (*models.UserResponse, error) {
+func (s *userServiceImpl) UpdateUser(requestingUserID, targetUserID string, userReq *models.UpdateUser) (*models.UserResponse, error) {
 	// Get the user that try set changes
 	requestingUser, err := s.repo.GetUserByID(requestingUserID)
 	if err != nil {
@@ -176,7 +178,7 @@ func (s *UserServiceImpl) UpdateUser(requestingUserID, targetUserID string, user
 	return &u, nil
 }
 
-func (s *UserServiceImpl) DeleteUserByID(id string) error {
+func (s *userServiceImpl) DeleteUserByID(id string) error {
 	if err := s.repo.DeleteUserByID(id); err != nil {
 		return err
 	}
