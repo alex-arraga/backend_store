@@ -39,7 +39,7 @@ func (s *authServiceImpl) RegisterWithEmailAndPassword(userReq *models.User) (*m
 	// Send data to repository
 	userDB, err := s.repo.RegisterUser(u)
 	if err != nil {
-		return nil, fmt.Errorf("error creating user: %w", err)
+		return nil, fmt.Errorf("error registering user: %w", err)
 	}
 
 	userResp := &models.UserResponse{
@@ -69,7 +69,7 @@ func (s *authServiceImpl) RegisterWithOAuth(user goth.User) (*models.UserRespons
 	// Send data to database
 	userDB, err := s.repo.RegisterUser(&u)
 	if err != nil {
-		return &models.UserResponse{}, fmt.Errorf("")
+		return &models.UserResponse{}, err
 	}
 
 	// Converts gorm_model.User (database model) to models.UserResponse, in order to be able to send it to the client
