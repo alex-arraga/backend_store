@@ -13,7 +13,7 @@ type AuthRepository interface {
 	CreateUser(user *gorm_models.User) (*gorm_models.User, error)
 	GetUserByEmail(email string) (*gorm_models.User, error)
 	RegisterUserWithEmail(user *gorm_models.User) (*gorm_models.User, error)
-	LoginUserWithEmail(user *gorm_models.User) (*gorm_models.User, error)
+	LoginUserWithEmail(email, passwordHashed string) (*gorm_models.User, error)
 }
 
 func newAuthRepo(db *gorm.DB) AuthRepository {
@@ -48,7 +48,7 @@ func (repo *RepoConnection) RegisterUserWithEmail(user *gorm_models.User) (*gorm
 
 	// If user exist, execute login
 	if userDB != nil {
-		if _, err := repo.LoginUserWithEmail(user); err != nil {
+		if _, err := repo.LoginUserWithEmail(user.Email, *user.PasswordHash); err != nil {
 			return nil, err
 		}
 	}
@@ -64,19 +64,19 @@ func (repo *RepoConnection) RegisterUserWithEmail(user *gorm_models.User) (*gorm
 	return u, nil
 }
 
-func (repo *RepoConnection) LoginUserWithEmail(user *gorm_models.User) (*gorm_models.User, error) {
+func (repo *RepoConnection) LoginUserWithEmail(email, passwordHashed string) (*gorm_models.User, error) {
 	// Verify if user exist
-	userDB, err := repo.GetUserByEmail(user.Email)
+	userDB, err := repo.GetUserByEmail(email)
 	if err != nil {
 		return nil, err
 	}
 
-	if user.PasswordHash == nil {
+	if userDB.PasswordHash == nil {
 		return nil, errors.New("this email is linked to an OAuth account")
 	}
 
 	// Verify if password exist
-	if err = hasher.CheckPassword(*user.PasswordHash, *userDB.PasswordHash); err != nil {
+	if err = hasher.CheckPassword(*userDB.PasswordHash, passwordHashed); err != nil {
 		return nil, err
 	}
 

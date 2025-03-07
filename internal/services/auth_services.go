@@ -26,6 +26,8 @@ type AuthServices interface {
 	RegisterWithOAuth(user goth.User) (*models.UserResponse, error)
 }
 
+// * Local Auth services
+
 func (s *authServiceImpl) RegisterWithEmailAndPassword(userReq *models.User) (*models.UserResponse, error) {
 	u := &gorm_models.User{
 		ID:       uuid.New(),
@@ -53,6 +55,26 @@ func (s *authServiceImpl) RegisterWithEmailAndPassword(userReq *models.User) (*m
 
 	return userResp, nil
 }
+
+func (s *authServiceImpl) LoginWithEmailAndPassword(email, password string) (*models.UserResponse, error) {
+	userDB, err := s.repo.LoginUserWithEmail(email, password)
+	if err != nil {
+		return nil, fmt.Errorf("error logging user: %w", err)
+	}
+
+	userResp := &models.UserResponse{
+		ID:        userDB.ID,
+		FullName:  userDB.FullName,
+		Email:     userDB.Email,
+		Role:      userDB.Role,
+		Provider:  userDB.Provider,
+		AvatarURL: userDB.AvatarURL,
+	}
+
+	return userResp, nil
+}
+
+// * OAuth services
 
 func (s *authServiceImpl) RegisterWithOAuth(user goth.User) (*models.UserResponse, error) {
 	// Converts goth.User (OAuth) to gorm_model.User, in order to be able to send it to the database
