@@ -17,6 +17,11 @@ func authRoutes(as services.AuthServices) chi.Router {
 		handlers.RegisterUserWithEmailHandler(w, r, as)
 	})
 
+	// Login using email and password
+	r.Post("/login", func(w http.ResponseWriter, r *http.Request) {
+		handlers.LoginUserWithEmailHandler(w, r, as)
+	})
+
 	// Starts OAuth login
 	r.Get("/{provider}/login", func(w http.ResponseWriter, r *http.Request) {
 		handlers.BeginAuthLoginHandler(w, r)
