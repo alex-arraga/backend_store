@@ -1,6 +1,10 @@
 package hasher
 
-import "golang.org/x/crypto/bcrypt"
+import (
+	"fmt"
+
+	"golang.org/x/crypto/bcrypt"
+)
 
 type PasswordHash []byte
 
@@ -14,7 +18,11 @@ func HashPassword(password string) (string, error) {
 }
 
 // Compares a password with the hashed password saved
-func CheckPassword(hashedPassword, password string) bool {
+func CheckPassword(hashedPassword, password string) error {
 	err := bcrypt.CompareHashAndPassword([]byte(hashedPassword), []byte(password))
-	return err == nil
+	if err != nil {
+		return fmt.Errorf("invalid password: %w", err)
+	}
+
+	return err
 }
