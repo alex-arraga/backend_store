@@ -13,6 +13,7 @@ import (
 	"github.com/alex-arraga/backend_store/pkg/hasher"
 	"github.com/alex-arraga/backend_store/pkg/jsonutil"
 	"github.com/alex-arraga/backend_store/pkg/logger"
+	"github.com/alex-arraga/backend_store/pkg/utils"
 )
 
 // * Local register handler - path: /v1/auth/register
@@ -140,7 +141,7 @@ func GetAuthCallbackHandler(w http.ResponseWriter, r *http.Request, as services.
 	}
 
 	// Respond with JSON to check data if "APP_ENV" is dev
-	if os.Getenv("APP_ENV") != "prod" {
+	if utils.GetAppEnv() != "prod" {
 		jsonutil.RespondJSON(w, http.StatusOK, "User successfully registered with OAuth", user)
 		return
 	}
