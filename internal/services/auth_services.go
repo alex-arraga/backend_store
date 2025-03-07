@@ -37,7 +37,7 @@ func (s *authServiceImpl) RegisterWithEmailAndPassword(userReq *models.User) (*m
 	}
 
 	// Send data to repository
-	userDB, err := s.repo.RegisterUser(u)
+	userDB, err := s.repo.RegisterUserWithEmail(u)
 	if err != nil {
 		return nil, fmt.Errorf("error registering user: %w", err)
 	}
@@ -67,7 +67,7 @@ func (s *authServiceImpl) RegisterWithOAuth(user goth.User) (*models.UserRespons
 	}
 
 	// Send data to database
-	userDB, err := s.repo.RegisterUser(&u)
+	userDB, err := s.repo.CreateUser(&u)
 	if err != nil {
 		return &models.UserResponse{}, err
 	}
