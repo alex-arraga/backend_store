@@ -16,9 +16,11 @@ import (
 	"github.com/alex-arraga/backend_store/pkg/utils"
 )
 
-// * Local register handler - path: /v1/auth/register
-// Register in the local application using an email and password
-func RegisterUserHandler(w http.ResponseWriter, r *http.Request, as services.AuthServices) {
+// * Local register handler
+
+// Register in the local application using an email and password.
+// Path to call: /v1/auth/register
+func RegisterUserWithEmailHandler(w http.ResponseWriter, r *http.Request, as services.AuthServices) {
 	type parameters struct {
 		FullName string `json:"fullname"`
 		Email    string `json:"email"`
@@ -66,8 +68,17 @@ func RegisterUserHandler(w http.ResponseWriter, r *http.Request, as services.Aut
 	jsonutil.RespondJSON(w, http.StatusOK, "User successfully registered", user)
 }
 
-// * OAuth handlers - path: /v1/auth/google/login?provider=google
-// Handler to starting OAuth login
+// Login in the local application using an email and password.
+// Path to call: /v1/auth/login
+func LoginUserWithEmailHandler(w http.ResponseWriter, r *http.Request, as services.AuthServices) {
+
+}
+
+// * OAuth handlers
+
+// Handler to starting OAuth login.
+// Path to call: /v1/auth/{provider}/login?provider={provider}.
+// Example path: /v1/auth/{google}/login?provider=google
 func BeginAuthLoginHandler(w http.ResponseWriter, r *http.Request) {
 	provider := chi.URLParam(r, "provider")
 	if provider == "" {
@@ -99,7 +110,9 @@ func BeginAuthLoginHandler(w http.ResponseWriter, r *http.Request) {
 	gothic.BeginAuthHandler(w, r)
 }
 
-// Handler to managaments Google respond after authentication
+// Handler to managaments Google respond after authentication.
+// Path to call: /v1/auth/{provider}/login?provider={provider}.
+// Example path: /v1/auth/google/login?provider=google
 func GetAuthCallbackHandler(w http.ResponseWriter, r *http.Request, as services.AuthServices) {
 	provider := chi.URLParam(r, "provider")
 	if provider == "" {
