@@ -9,6 +9,7 @@ import (
 	"github.com/markbates/goth/providers/google"
 
 	"github.com/alex-arraga/backend_store/pkg/logger"
+	"github.com/alex-arraga/backend_store/pkg/utils"
 )
 
 type Opts struct {
@@ -33,7 +34,7 @@ func loadOptions() Opts {
 	var httpOnly bool
 
 	secretKey := os.Getenv("SECRET_KEY")
-	appEnv := os.Getenv("APP_ENV")
+	appEnv := utils.GetAppEnv()
 	callbackURL := os.Getenv("GOOGLE_CALLBACK_URL")
 
 	if secretKey == "" || appEnv == "" || callbackURL == "" {

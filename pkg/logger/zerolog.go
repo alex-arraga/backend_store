@@ -5,6 +5,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/alex-arraga/backend_store/pkg/utils"
 	"github.com/rs/zerolog"
 	"gopkg.in/natefinch/lumberjack.v2"
 )
@@ -16,8 +17,8 @@ func InitLogger(serviceName string) {
 	var multiWriter io.Writer
 	consoleWriter := zerolog.ConsoleWriter{Out: os.Stdout, TimeFormat: time.RFC3339}
 
-	appEnv := os.Getenv("APP_ENV")
-	if appEnv == "production" {
+	appEnv := utils.GetAppEnv()
+	if appEnv == "prod" {
 		logFile := &lumberjack.Logger{
 			Filename:   "logs/app.log",
 			MaxSize:    10,   // MB
@@ -26,7 +27,7 @@ func InitLogger(serviceName string) {
 			Compress:   true, // Compress old logs
 		}
 
-		// If appEnv is "production" logs will are saved in files and output will be JSON format
+		// If appEnv is "prod" (production) logs will are saved in files and output will be JSON format
 		multiWriter = io.MultiWriter(os.Stdout, logFile)
 	} else {
 		// Otherwise, it is assumed that it is a “dev” environment and the logs will not be saved to files, the output will be Stdout
