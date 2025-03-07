@@ -98,18 +98,13 @@ func LoginUserWithEmailHandler(w http.ResponseWriter, r *http.Request, as servic
 		return
 	}
 
-	u := models.User{
-		Email:        params.Email,
-		PasswordHash: hashedPassword,
+	user, err := as.LoginWithEmailAndPassword(params.Email, hashedPassword)
+	if err != nil {
+		jsonutil.RespondError(w, http.StatusBadRequest, fmt.Sprintf("Error creating user: %v", err))
+		return
 	}
 
-	// user, err := as.LoginUserWithEmail(&u)
-	// if err != nil {
-	// 	jsonutil.RespondError(w, http.StatusBadRequest, fmt.Sprintf("Error creating user: %v", err))
-	// 	return
-	// }
-
-	jsonutil.RespondJSON(w, http.StatusOK, "User successfully registered", u)
+	jsonutil.RespondJSON(w, http.StatusOK, "User successfully registered", user)
 }
 
 // * OAuth handlers

@@ -24,6 +24,7 @@ func newAuthService(repo repositories.AuthRepository) AuthServices {
 type AuthServices interface {
 	RegisterWithEmailAndPassword(userReq *models.User) (*models.UserResponse, error)
 	RegisterWithOAuth(user goth.User) (*models.UserResponse, error)
+	LoginWithEmailAndPassword(email, password string) (*models.UserResponse, error)
 }
 
 // * Local Auth services
