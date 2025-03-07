@@ -5,9 +5,10 @@ import (
 	"os"
 	"time"
 
-	"github.com/alex-arraga/backend_store/pkg/utils"
 	"github.com/rs/zerolog"
 	"gopkg.in/natefinch/lumberjack.v2"
+
+	"github.com/alex-arraga/backend_store/pkg/utils"
 )
 
 var log zerolog.Logger
