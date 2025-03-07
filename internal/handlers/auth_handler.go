@@ -100,7 +100,7 @@ func LoginUserWithEmailHandler(w http.ResponseWriter, r *http.Request, as servic
 
 	user, err := as.LoginWithEmailAndPassword(params.Email, hashedPassword)
 	if err != nil {
-		jsonutil.RespondError(w, http.StatusBadRequest, fmt.Sprintf("Error creating user: %v", err))
+		jsonutil.RespondError(w, http.StatusBadRequest, err.Error())
 		return
 	}
 

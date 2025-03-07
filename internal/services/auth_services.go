@@ -60,7 +60,7 @@ func (s *authServiceImpl) RegisterWithEmailAndPassword(userReq *models.User) (*m
 func (s *authServiceImpl) LoginWithEmailAndPassword(email, password string) (*models.UserResponse, error) {
 	userDB, err := s.repo.LoginUserWithEmail(email, password)
 	if err != nil {
-		return nil, fmt.Errorf("error logging user: %w", err)
+		return nil, fmt.Errorf("error logging in user: %w", err)
 	}
 
 	userResp := &models.UserResponse{
