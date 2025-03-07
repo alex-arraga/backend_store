@@ -142,6 +142,7 @@ func GetAuthCallbackHandler(w http.ResponseWriter, r *http.Request, as services.
 	// Respond with JSON to check data if "APP_ENV" is dev
 	if os.Getenv("APP_ENV") != "prod" {
 		jsonutil.RespondJSON(w, http.StatusOK, "User successfully registered with OAuth", user)
+		return
 	}
 
 	// Redirect when auth successfully
