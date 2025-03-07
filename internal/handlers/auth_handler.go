@@ -71,7 +71,45 @@ func RegisterUserWithEmailHandler(w http.ResponseWriter, r *http.Request, as ser
 // Login in the local application using an email and password.
 // Path to call: /v1/auth/login
 func LoginUserWithEmailHandler(w http.ResponseWriter, r *http.Request, as services.AuthServices) {
+	type parameters struct {
+		Email    string `json:"email"`
+		Password string `json:"password"`
+	}
 
+	params, err := jsonutil.ParseRequestBody[parameters](r)
+	if err != nil {
+		jsonutil.RespondError(w, http.StatusBadRequest, fmt.Sprintf("Invalid input: %s", err))
+		return
+	}
+
+	if params.Email == "" {
+		jsonutil.RespondError(w, http.StatusBadRequest, "Email is required")
+		return
+	}
+	if params.Password == "" {
+		jsonutil.RespondError(w, http.StatusBadRequest, "Password is required")
+		return
+	}
+
+	// Hashing password
+	hashedPassword, err := hasher.HashPassword(params.Password)
+	if err != nil {
+		jsonutil.RespondError(w, http.StatusBadRequest, "Error hashing password")
+		return
+	}
+
+	u := models.User{
+		Email:        params.Email,
+		PasswordHash: hashedPassword,
+	}
+
+	// user, err := as.LoginUserWithEmail(&u)
+	// if err != nil {
+	// 	jsonutil.RespondError(w, http.StatusBadRequest, fmt.Sprintf("Error creating user: %v", err))
+	// 	return
+	// }
+
+	jsonutil.RespondJSON(w, http.StatusOK, "User successfully registered", u)
 }
 
 // * OAuth handlers
