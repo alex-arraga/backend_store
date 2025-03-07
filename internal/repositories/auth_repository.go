@@ -10,12 +10,32 @@ import (
 )
 
 type AuthRepository interface {
+	GetUserByEmail(id string, password string) (*gorm_models.User, error)
 	RegisterUser(user *gorm_models.User) (*gorm_models.User, error)
 	LoginUserWithEmail(user *gorm_models.User) (*gorm_models.User, error)
 }
 
 func newAuthRepo(db *gorm.DB) AuthRepository {
 	return &RepoConnection{db: db}
+}
+
+func (repo *RepoConnection) GetUserByEmail(email string, password string) (*gorm_models.User, error) {
+	var user gorm_models.User
+
+	if err := repo.db.First(&user, "email = ?", user.Email).Error; err != nil {
+		return nil, err
+	}
+
+	if user.PasswordHash == nil {
+		return nil, errors.New("this email is linked to an OAuth account")
+	}
+
+	// Verify if password exist
+	if err := hasher.CheckPassword(*user.PasswordHash, password); err != nil {
+		return nil, err
+	}
+
+	return &user, nil
 }
 
 func (repo *RepoConnection) RegisterUser(user *gorm_models.User) (*gorm_models.User, error) {
