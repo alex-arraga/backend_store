@@ -30,13 +30,12 @@ type AuthServices interface {
 // * Local Auth services
 
 func (s *authServiceImpl) RegisterWithEmailAndPassword(userReq *models.User) (*models.UserResponse, error) {
+	// Create a gorm.User model, the "Provider" field will be created as "local" by default, and "EmailVerified" as "false"
 	u := &gorm_models.User{
-		ID:       uuid.New(),
-		FullName: userReq.FullName,
-		Email:    userReq.Email,
-		// EmailVerified: false,
+		ID:           uuid.New(),
+		FullName:     userReq.FullName,
+		Email:        userReq.Email,
 		PasswordHash: &userReq.PasswordHash,
-		// Provider: "local",
 	}
 
 	// Send data to repository
