@@ -13,7 +13,7 @@ type AuthRepository interface {
 	CreateUser(user *gorm_models.User) (*gorm_models.User, error)
 	GetUserByEmail(email string) (*gorm_models.User, error)
 	RegisterUserWithEmail(user *gorm_models.User) (*gorm_models.User, error)
-	LoginUserWithEmail(email, passwordHashed string) (*gorm_models.User, error)
+	LoginUserWithEmail(email, password string) (*gorm_models.User, error)
 }
 
 func newAuthRepo(db *gorm.DB) AuthRepository {
@@ -61,7 +61,7 @@ func (repo *RepoConnection) RegisterUserWithEmail(user *gorm_models.User) (*gorm
 	return u, nil
 }
 
-func (repo *RepoConnection) LoginUserWithEmail(email, passwordHashed string) (*gorm_models.User, error) {
+func (repo *RepoConnection) LoginUserWithEmail(email, password string) (*gorm_models.User, error) {
 	// Verify if user exist
 	userDB, err := repo.GetUserByEmail(email)
 	if err != nil {
@@ -73,7 +73,7 @@ func (repo *RepoConnection) LoginUserWithEmail(email, passwordHashed string) (*g
 	}
 
 	// Verify if password exist
-	if err = hasher.CheckPassword(*userDB.PasswordHash, passwordHashed); err != nil {
+	if err = hasher.CheckPassword(*userDB.PasswordHash, password); err != nil {
 		return nil, err
 	}
 

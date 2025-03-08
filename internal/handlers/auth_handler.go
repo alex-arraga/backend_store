@@ -92,14 +92,8 @@ func LoginUserWithEmailHandler(w http.ResponseWriter, r *http.Request, as servic
 		return
 	}
 
-	// Hashing password
-	hashedPassword, err := hasher.HashPassword(params.Password)
-	if err != nil {
-		jsonutil.RespondError(w, http.StatusBadRequest, "Error hashing password")
-		return
-	}
-
-	user, err := as.LoginWithEmailAndPassword(params.Email, hashedPassword)
+	// Call service to login
+	user, err := as.LoginWithEmailAndPassword(params.Email, params.Password)
 	if err != nil {
 		jsonutil.RespondError(w, http.StatusBadRequest, err.Error())
 		return
