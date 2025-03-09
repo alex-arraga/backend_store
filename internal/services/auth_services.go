@@ -23,7 +23,7 @@ func newAuthService(repo repositories.AuthRepository) AuthServices {
 // Methods of auth services
 type AuthServices interface {
 	RegisterWithEmailAndPassword(userReq *models.User) (*models.UserResponse, error)
-	RegisterWithOAuth(user goth.User) (*models.UserResponse, error)
+	LoginWithOAuth(user goth.User) (*models.UserResponse, error)
 	LoginWithEmailAndPassword(email, password string) (*models.UserResponse, error)
 }
 
@@ -76,7 +76,7 @@ func (s *authServiceImpl) LoginWithEmailAndPassword(email, password string) (*mo
 
 // * OAuth services
 
-func (s *authServiceImpl) RegisterWithOAuth(user goth.User) (*models.UserResponse, error) {
+func (s *authServiceImpl) LoginWithOAuth(user goth.User) (*models.UserResponse, error) {
 	// Converts goth.User (OAuth) to gorm_model.User, in order to be able to send it to the database
 	u := gorm_models.User{
 		ID:            uuid.New(),

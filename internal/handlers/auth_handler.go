@@ -175,7 +175,7 @@ func GetAuthCallbackHandler(w http.ResponseWriter, r *http.Request, as services.
 	logger.UseLogger().Debug().Msgf("User authenticated \n %v", gothUser)
 
 	// Send user data to User Service
-	user, err := as.RegisterWithOAuth(gothUser)
+	user, err := as.LoginWithOAuth(gothUser)
 	if err != nil {
 		jsonutil.RespondError(w, http.StatusInternalServerError, fmt.Sprintf("Error creating user with OAuth: %v", err))
 		return
