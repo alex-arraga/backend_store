@@ -99,7 +99,7 @@ func LoginUserWithEmailHandler(w http.ResponseWriter, r *http.Request, as servic
 		return
 	}
 
-	jsonutil.RespondJSON(w, http.StatusOK, "User successfully registered", user)
+	jsonutil.RespondJSON(w, http.StatusOK, "User successfully logged using local email", user)
 }
 
 // * OAuth handlers
