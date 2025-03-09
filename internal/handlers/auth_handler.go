@@ -172,8 +172,6 @@ func GetAuthCallbackHandler(w http.ResponseWriter, r *http.Request, as services.
 		return
 	}
 
-	logger.UseLogger().Debug().Msgf("User authenticated \n %v", gothUser)
-
 	// Send user data to User Service
 	user, err := as.LoginWithOAuth(gothUser)
 	if err != nil {
@@ -183,7 +181,8 @@ func GetAuthCallbackHandler(w http.ResponseWriter, r *http.Request, as services.
 
 	// Respond with JSON to check data if "APP_ENV" is dev
 	if utils.GetAppEnv() != "prod" {
-		jsonutil.RespondJSON(w, http.StatusOK, "User successfully registered with OAuth", user)
+		logger.UseLogger().Debug().Msgf("User authenticated \n %v", gothUser)
+		jsonutil.RespondJSON(w, http.StatusOK, "User successfully logged with OAuth", user)
 		return
 	}
 
