@@ -11,10 +11,16 @@ import (
 
 var jwtKey []byte
 
+type Claims struct {
+	UserID uuid.UUID
+	Email  string
+	jwt.RegisteredClaims
+}
+
 func loadJWTKey() error {
 	key := os.Getenv("JWT_KEY")
 	if key == "" {
-		return errors.New("couldn't get JWT_KEY")
+		return errors.New("couldn't get enviroment variable: JWT_KEY")
 	}
 
 	// Converts string to []bytes
@@ -22,12 +28,6 @@ func loadJWTKey() error {
 
 	jwtKey = keyBytes
 	return nil
-}
-
-type Claims struct {
-	UserID uuid.UUID
-	Email  string
-	jwt.RegisteredClaims
 }
 
 func GenerateJWT(userID uuid.UUID, email string) (string, error) {
@@ -46,4 +46,18 @@ func GenerateJWT(userID uuid.UUID, email string) (string, error) {
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	return token.SignedString(jwtKey)
+}
+
+// Validate JWT
+func ValidateJWT(tokenStr string) (*Claims, error) {
+	claims := &Claims{}
+	token, err := jwt.ParseWithClaims(tokenStr, claims, func(token *jwt.Token) (interface{}, error) {
+		return jwtKey, nil
+	})
+
+	if err != nil || !token.Valid {
+		return nil, err
+	}
+
+	return claims, nil
 }
