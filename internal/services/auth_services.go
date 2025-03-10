@@ -11,6 +11,7 @@ import (
 	"github.com/alex-arraga/backend_store/internal/models"
 	"github.com/alex-arraga/backend_store/internal/repositories"
 	"github.com/alex-arraga/backend_store/pkg/auth"
+	"github.com/alex-arraga/backend_store/pkg/hasher"
 )
 
 // Implementation and initialization of auth services that connect to the auth repository
@@ -25,8 +26,8 @@ func newAuthService(repo repositories.AuthRepository) AuthServices {
 // Methods of auth services
 type AuthServices interface {
 	RegisterWithEmailAndPassword(userReq *models.User) (*models.AuthResponse, error)
+	LoginWithEmailAndPassword(email, password string) (*models.AuthResponse, error)
 	LoginWithOAuth(user goth.User) (*models.UserResponse, error)
-	LoginWithEmailAndPassword(email, password string) (*models.UserResponse, error)
 }
 
 // * Local Auth services
@@ -74,22 +75,41 @@ func (s *authServiceImpl) RegisterWithEmailAndPassword(userReq *models.User) (*m
 	return authResponse, nil
 }
 
-func (s *authServiceImpl) LoginWithEmailAndPassword(email, password string) (*models.UserResponse, error) {
-	userDB, err := s.repo.LoginUserWithEmail(email, password)
+func (s *authServiceImpl) LoginWithEmailAndPassword(email, password string) (*models.AuthResponse, error) {
+	existingUser, err := s.repo.LoginUserWithEmail(email, password)
 	if err != nil {
 		return nil, fmt.Errorf("error logging in user: %w", err)
 	}
 
-	userResp := &models.UserResponse{
-		ID:        userDB.ID,
-		FullName:  userDB.FullName,
-		Email:     userDB.Email,
-		Role:      userDB.Role,
-		Provider:  userDB.Provider,
-		AvatarURL: userDB.AvatarURL,
+	if existingUser.PasswordHash == nil {
+		return nil, errors.New("this email is linked to an OAuth account")
 	}
 
-	return userResp, nil
+	// Verify if password exist
+	if err = hasher.CheckPassword(*existingUser.PasswordHash, password); err != nil {
+		return nil, err
+	}
+
+	// Generate JWT
+	token, err := auth.GenerateJWT(existingUser.ID, existingUser.Email)
+	if err != nil {
+		return &models.AuthResponse{}, err
+	}
+
+	// Generate client response
+	authResponse := &models.AuthResponse{
+		User: models.UserResponse{
+			ID:        existingUser.ID,
+			FullName:  existingUser.FullName,
+			Email:     existingUser.Email,
+			Role:      existingUser.Role,
+			Provider:  existingUser.Provider,
+			AvatarURL: existingUser.AvatarURL,
+		},
+		Token: token,
+	}
+
+	return authResponse, nil
 }
 
 // * OAuth services

@@ -1,13 +1,10 @@
 package repositories
 
 import (
-	"errors"
-
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 
 	"github.com/alex-arraga/backend_store/internal/database/gorm_models"
-	"github.com/alex-arraga/backend_store/pkg/hasher"
 )
 
 type AuthRepository interface {
@@ -57,15 +54,6 @@ func (repo *RepoConnection) LoginUserWithEmail(email, password string) (*gorm_mo
 	// Verify if user exist
 	userDB, err := repo.GetUserByEmail(email)
 	if err != nil {
-		return nil, err
-	}
-
-	if userDB.PasswordHash == nil {
-		return nil, errors.New("this email is linked to an OAuth account")
-	}
-
-	// Verify if password exist
-	if err = hasher.CheckPassword(*userDB.PasswordHash, password); err != nil {
 		return nil, err
 	}
 
