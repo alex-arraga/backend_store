@@ -1,6 +1,7 @@
 package services
 
 import (
+	"errors"
 	"fmt"
 
 	"github.com/google/uuid"
@@ -9,6 +10,7 @@ import (
 	"github.com/alex-arraga/backend_store/internal/database/gorm_models"
 	"github.com/alex-arraga/backend_store/internal/models"
 	"github.com/alex-arraga/backend_store/internal/repositories"
+	"github.com/alex-arraga/backend_store/pkg/auth"
 )
 
 // Implementation and initialization of auth services that connect to the auth repository
@@ -31,6 +33,11 @@ type AuthServices interface {
 
 func (s *authServiceImpl) RegisterWithEmailAndPassword(userReq *models.User) (*models.UserResponse, error) {
 	// Create a gorm.User model, the "Provider" field will be created as "local" by default, and "EmailVerified" as "false"
+	existingUser, _ := s.repo.GetUserByEmail(userReq.Email)
+	if existingUser.ID != uuid.Nil {
+		return &models.UserResponse{}, errors.New("user already exists")
+	}
+
 	u := &gorm_models.User{
 		ID:           uuid.New(),
 		FullName:     userReq.FullName,
@@ -39,18 +46,24 @@ func (s *authServiceImpl) RegisterWithEmailAndPassword(userReq *models.User) (*m
 	}
 
 	// Send data to repository
-	userDB, err := s.repo.RegisterUserWithEmail(u)
+	newUser, err := s.repo.RegisterUserWithEmail(u)
 	if err != nil {
 		return nil, fmt.Errorf("error registering user: %w", err)
 	}
 
+	// Generate JWT
+	_, err = auth.GenerateJWT(newUser.ID, newUser.Email)
+	if err != nil {
+		return &models.UserResponse{}, err
+	}
+
 	userResp := &models.UserResponse{
-		ID:        userDB.ID,
-		FullName:  userDB.FullName,
-		Email:     userDB.Email,
-		Role:      userDB.Role,
-		Provider:  userDB.Provider,
-		AvatarURL: userDB.AvatarURL,
+		ID:        newUser.ID,
+		FullName:  newUser.FullName,
+		Email:     newUser.Email,
+		Role:      newUser.Role,
+		Provider:  newUser.Provider,
+		AvatarURL: newUser.AvatarURL,
 	}
 
 	return userResp, nil
