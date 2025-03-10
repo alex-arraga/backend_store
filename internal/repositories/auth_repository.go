@@ -3,11 +3,11 @@ package repositories
 import (
 	"errors"
 
+	"github.com/google/uuid"
 	"gorm.io/gorm"
 
 	"github.com/alex-arraga/backend_store/internal/database/gorm_models"
 	"github.com/alex-arraga/backend_store/pkg/hasher"
-	"github.com/google/uuid"
 )
 
 type AuthRepository interface {
