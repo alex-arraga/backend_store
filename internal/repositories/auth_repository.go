@@ -7,6 +7,7 @@ import (
 
 	"github.com/alex-arraga/backend_store/internal/database/gorm_models"
 	"github.com/alex-arraga/backend_store/pkg/hasher"
+	"github.com/google/uuid"
 )
 
 type AuthRepository interface {
@@ -31,9 +32,12 @@ func (repo *RepoConnection) CreateUser(user *gorm_models.User) (*gorm_models.Use
 func (repo *RepoConnection) GetUserByEmail(email string) (*gorm_models.User, error) {
 	var user gorm_models.User
 
-	userDB := repo.db.First(&user, "email = ?", email)
-	if userDB.Error != nil {
-		return nil, errors.New("user not found in database")
+	err := repo.db.First(&user, "email = ?", email).Error
+	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return &gorm_models.User{ID: uuid.Nil}, nil
+		}
+		return &gorm_models.User{}, err
 	}
 
 	return &user, nil
