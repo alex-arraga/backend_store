@@ -32,12 +32,13 @@ type AuthServices interface {
 // * Local Auth services
 
 func (s *authServiceImpl) RegisterWithEmailAndPassword(userReq *models.User) (*models.AuthResponse, error) {
-	// Create a gorm.User model, the "Provider" field will be created as "local" by default, and "EmailVerified" as "false"
+	// Check if the user exist
 	existingUser, _ := s.repo.GetUserByEmail(userReq.Email)
 	if existingUser.ID != uuid.Nil {
 		return &models.AuthResponse{}, errors.New("user already exists")
 	}
 
+	// Create a gorm.User model, the "Provider" field will be created as "local" by default, and "EmailVerified" as "false"
 	u := &gorm_models.User{
 		ID:           uuid.New(),
 		FullName:     userReq.FullName,
@@ -57,6 +58,7 @@ func (s *authServiceImpl) RegisterWithEmailAndPassword(userReq *models.User) (*m
 		return &models.AuthResponse{}, err
 	}
 
+	// Generate client response
 	authResponse := &models.AuthResponse{
 		User: models.UserResponse{
 			ID:        newUser.ID,
