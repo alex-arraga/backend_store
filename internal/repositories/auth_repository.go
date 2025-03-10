@@ -44,25 +44,13 @@ func (repo *RepoConnection) GetUserByEmail(email string) (*gorm_models.User, err
 }
 
 func (repo *RepoConnection) RegisterUserWithEmail(user *gorm_models.User) (*gorm_models.User, error) {
-	// Verify if user exist
-	userDB, _ := repo.GetUserByEmail(user.Email)
-
-	// If user exist, execute login
-	if userDB != nil {
-		if _, err := repo.LoginUserWithEmail(user.Email, *user.PasswordHash); err != nil {
-			return nil, err
-		}
-	}
-
 	// If user not exist, create them
-	u, err := repo.CreateUser(user)
+	newUser, err := repo.CreateUser(user)
 	if err != nil {
 		return nil, err
 	}
 
-	// TODO: Generate and return a JWT
-
-	return u, nil
+	return newUser, nil
 }
 
 func (repo *RepoConnection) LoginUserWithEmail(email, password string) (*gorm_models.User, error) {
@@ -80,8 +68,6 @@ func (repo *RepoConnection) LoginUserWithEmail(email, password string) (*gorm_mo
 	if err = hasher.CheckPassword(*userDB.PasswordHash, password); err != nil {
 		return nil, err
 	}
-
-	// TODO: Generate and return a JWT
 
 	return userDB, nil
 }
