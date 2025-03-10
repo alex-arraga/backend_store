@@ -41,7 +41,6 @@ func (repo *RepoConnection) GetUserByEmail(email string) (*gorm_models.User, err
 }
 
 func (repo *RepoConnection) RegisterUserWithEmail(user *gorm_models.User) (*gorm_models.User, error) {
-	// If user not exist, create them
 	newUser, err := repo.CreateUser(user)
 	if err != nil {
 		return nil, err
@@ -51,7 +50,6 @@ func (repo *RepoConnection) RegisterUserWithEmail(user *gorm_models.User) (*gorm
 }
 
 func (repo *RepoConnection) LoginUserWithEmail(email, password string) (*gorm_models.User, error) {
-	// Verify if user exist
 	userDB, err := repo.GetUserByEmail(email)
 	if err != nil {
 		return nil, err
