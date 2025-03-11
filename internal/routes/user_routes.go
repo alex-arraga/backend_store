@@ -9,7 +9,7 @@ import (
 	"github.com/alex-arraga/backend_store/internal/services"
 )
 
-func loadProtectedUserRoutes(r chi.Router, us services.UserService) chi.Router {
+func loadProtectedUserRoutes(r chi.Router, us services.UserService) {
 	r.Route("/user", func(r chi.Router) {
 		// Path of group: /v1/user
 		r.Group(func(r chi.Router) {
@@ -30,6 +30,4 @@ func loadProtectedUserRoutes(r chi.Router, us services.UserService) chi.Router {
 			})
 		})
 	})
-
-	return r
 }

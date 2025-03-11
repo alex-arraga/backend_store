@@ -10,7 +10,7 @@ import (
 )
 
 // Public auth routes
-func loadPublicAuthRoutes(r chi.Router, as services.AuthServices) chi.Router {
+func loadPublicAuthRoutes(r chi.Router, as services.AuthServices) {
 	r.Route("/auth", func(r chi.Router) {
 		// Path of group: /v1/auth
 		r.Group(func(r chi.Router) {
@@ -35,6 +35,4 @@ func loadPublicAuthRoutes(r chi.Router, as services.AuthServices) chi.Router {
 			})
 		})
 	})
-
-	return r
 }

@@ -8,19 +8,17 @@ import (
 )
 
 // Private or Protected routes
-func mountProtectedRoutes(r chi.Router, services *services.ServicesContainer) chi.Router {
+func mountProtectedRoutes(r chi.Router, services *services.ServicesContainer) {
 	r.Group(func(r chi.Router) {
 		loadProtectedUserRoutes(r, services.UserSrv)
 	})
-	return r
 }
 
 // Public routes
-func mountPublicRoutes(r chi.Router, services *services.ServicesContainer) chi.Router {
+func mountPublicRoutes(r chi.Router, services *services.ServicesContainer) {
 	r.Group(func(r chi.Router) {
 		loadPublicAuthRoutes(r, services.AuthSrv)
 	})
-	return r
 }
 
 func MountRoutes(services *services.ServicesContainer) chi.Router {
