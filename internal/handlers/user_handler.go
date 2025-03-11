@@ -9,15 +9,30 @@ import (
 
 	"github.com/alex-arraga/backend_store/internal/models"
 	"github.com/alex-arraga/backend_store/internal/services"
+	"github.com/alex-arraga/backend_store/pkg/context_keys"
 	"github.com/alex-arraga/backend_store/pkg/jsonutil"
 )
 
 // path: /user - GET
 func GetAllUsersHandler(w http.ResponseWriter, r *http.Request, us services.UserService) {
-	// TODO: Validate if user role is admin
-	// if user.Role != "admin" {
-	// 	return jsonutil.RespondError(w, http.StatusUnauthorized, "Invalid user role")
-	// }
+	// Get userID from context
+	userID, ok := r.Context().Value(context_keys.UserIDKey).(string)
+	if !ok {
+		jsonutil.RespondError(w, http.StatusUnauthorized, "UserID not found in context")
+		return
+	}
+
+	// Get user from ID and validate if it's admin
+	user, err := us.GetUserByID(userID)
+	if err != nil {
+		jsonutil.RespondError(w, http.StatusUnauthorized, err.Error())
+		return
+	}
+
+	if user.Role != "admin" {
+		jsonutil.RespondError(w, http.StatusUnauthorized, "Unauthorize to get all users")
+		return
+	}
 
 	allUses, err := us.GetAllUsers()
 	if err != nil {
