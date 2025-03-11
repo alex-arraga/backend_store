@@ -48,19 +48,21 @@ func (s *userServiceImpl) GetAllUsers() ([]models.UserResponse, error) {
 }
 
 func (s *userServiceImpl) GetUserByID(id string) (*models.UserResponse, error) {
-	userDB, err := s.repo.GetUserByID(id)
+	user, err := s.repo.GetUserByID(id)
 	if err != nil {
 		return nil, fmt.Errorf("couldn't get user: %w", err)
 	}
 
-	userReq := models.UserResponse{
-		ID: userDB.ID,
-		// Name:  userDB.FullName,
-		Email: userDB.Email,
-		Role:  userDB.Role,
+	userResponse := &models.UserResponse{
+		ID:        user.ID,
+		FullName:  user.FullName,
+		Email:     user.Email,
+		Role:      user.Role,
+		Provider:  user.Provider,
+		AvatarURL: user.AvatarURL,
 	}
 
-	return &userReq, nil
+	return userResponse, nil
 }
 
 func (s *userServiceImpl) UpdateUser(requestingUserID, targetUserID string, userReq *models.UpdateUser) (*models.UserResponse, error) {
