@@ -26,19 +26,21 @@ type UserService interface {
 }
 
 func (s *userServiceImpl) GetAllUsers() ([]models.UserResponse, error) {
-	usersDB, err := s.repo.GetAllUsers()
+	users, err := s.repo.GetAllUsers()
 	if err != nil {
 		return []models.UserResponse{}, fmt.Errorf("couldn't get users: %w", err)
 	}
 
 	var allUsers []models.UserResponse
 
-	for _, user := range usersDB {
+	for _, user := range users {
 		u := models.UserResponse{
-			ID: user.ID,
-			// Name:  user.FullName,
-			Email: user.Email,
-			Role:  user.Role,
+			ID:        user.ID,
+			FullName:  user.FullName,
+			Email:     user.Email,
+			Role:      user.Role,
+			Provider:  user.Provider,
+			AvatarURL: user.AvatarURL,
 		}
 
 		allUsers = append(allUsers, u)
