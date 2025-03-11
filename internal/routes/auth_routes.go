@@ -9,15 +9,15 @@ import (
 	"github.com/alex-arraga/backend_store/internal/services"
 )
 
-// Public auth routes
+// Path of routes: /v1/auth
 func loadPublicAuthRoutes(r chi.Router, as services.AuthServices) {
-	// Path of group: /v1/auth
 	r.Route("/auth", func(r chi.Router) {
+		// Local register using email and password
 		r.Post("/register", func(w http.ResponseWriter, r *http.Request) {
 			handlers.RegisterUserWithEmailHandler(w, r, as)
 		})
 
-		// Login using email and password
+		// Local login using email and password
 		r.Post("/login", func(w http.ResponseWriter, r *http.Request) {
 			handlers.LoginUserWithEmailHandler(w, r, as)
 		})
