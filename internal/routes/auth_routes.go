@@ -9,9 +9,8 @@ import (
 	"github.com/alex-arraga/backend_store/internal/services"
 )
 
-func authRoutes(as services.AuthServices) chi.Router {
-	r := chi.NewRouter()
-
+// Public auth routes
+func loadPublicAuthRoutes(r chi.Router, as services.AuthServices) chi.Router {
 	// Register using email and password
 	r.Post("/register", func(w http.ResponseWriter, r *http.Request) {
 		handlers.RegisterUserWithEmailHandler(w, r, as)
@@ -31,6 +30,14 @@ func authRoutes(as services.AuthServices) chi.Router {
 	r.Get("/{provider}/callback", func(w http.ResponseWriter, r *http.Request) {
 		handlers.GetAuthCallbackHandler(w, r, as)
 	})
+
+	return r
+}
+
+func loadAuthRoutes(as services.AuthServices) chi.Router {
+	r := chi.NewRouter()
+
+	loadPublicAuthRoutes(r, as)
 
 	return r
 }

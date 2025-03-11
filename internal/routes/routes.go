@@ -17,7 +17,7 @@ func MountRoutes(services *services.ServicesContainer) chi.Router {
 
 	// Mount routes
 	v1Router.Mount("/user", loadUserRoutes(services.UserSrv))
-	v1Router.Mount("/auth", authRoutes(services.AuthSrv))
+	v1Router.Mount("/auth", loadAuthRoutes(services.AuthSrv))
 
 	r.Mount("/v1", v1Router)
 	return r
