@@ -9,13 +9,13 @@ import (
 
 // Private or Protected routes
 func mountProtectedRoutes(r chi.Router, services *services.ServicesContainer) chi.Router {
-	r.Mount("/user", loadUserRoutes(services.UserSrv))
+	r.Mount("/user", loadProtectedUserRoutes(services.UserSrv))
 	return r
 }
 
 // Public routes
 func mountPublicRoutes(r chi.Router, services *services.ServicesContainer) chi.Router {
-	r.Mount("/auth", loadAuthRoutes(services.AuthSrv))
+	r.Mount("/auth", loadPublicAuthRoutes(services.AuthSrv))
 	return r
 }
 

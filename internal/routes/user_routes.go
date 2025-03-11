@@ -9,7 +9,9 @@ import (
 	"github.com/alex-arraga/backend_store/internal/services"
 )
 
-func loadProtectedUserRoutes(r chi.Router, us services.UserService) chi.Router {
+func loadProtectedUserRoutes(us services.UserService) chi.Router {
+	r := chi.NewRouter()
+
 	// Path: /v1/user
 	r.Get("/", func(w http.ResponseWriter, r *http.Request) {
 		handlers.GetAllUsersHandler(w, r, us)
@@ -26,14 +28,6 @@ func loadProtectedUserRoutes(r chi.Router, us services.UserService) chi.Router {
 	r.Delete("/{userID}", func(w http.ResponseWriter, r *http.Request) {
 		handlers.DeleteUserHandler(w, r, us)
 	})
-
-	return r
-}
-
-func loadUserRoutes(us services.UserService) chi.Router {
-	r := chi.NewRouter()
-
-	loadProtectedUserRoutes(r, us)
 
 	return r
 }
