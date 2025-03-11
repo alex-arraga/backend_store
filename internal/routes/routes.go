@@ -17,7 +17,9 @@ func mountProtectedRoutes(r chi.Router, services *services.ServicesContainer) ch
 
 // Public routes
 func mountPublicRoutes(r chi.Router, services *services.ServicesContainer) chi.Router {
-	r.Mount("/auth", loadPublicAuthRoutes(services.AuthSrv))
+	r.Group(func(r chi.Router) {
+		loadPublicAuthRoutes(r, services.AuthSrv)
+	})
 	return r
 }
 
