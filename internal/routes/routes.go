@@ -9,7 +9,9 @@ import (
 
 // Private or Protected routes
 func mountProtectedRoutes(r chi.Router, services *services.ServicesContainer) chi.Router {
-	r.Mount("/user", loadProtectedUserRoutes(services.UserSrv))
+	r.Group(func(r chi.Router) {
+		loadProtectedUserRoutes(r, services.UserSrv)
+	})
 	return r
 }
 
