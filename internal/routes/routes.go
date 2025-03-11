@@ -25,15 +25,15 @@ func MountRoutes(services *services.ServicesContainer) chi.Router {
 	r := chi.NewRouter()
 
 	r.Route("/v1", func(r chi.Router) {
+		// Public routes group
+		r.Group(func(r chi.Router) {
+			mountPublicRoutes(r, services)
+		})
+
 		// Protected routes group
 		r.Group(func(r chi.Router) {
 			r.Use(middlewares.JWTAuthMiddleware)
 			mountProtectedRoutes(r, services)
-		})
-
-		// Public routes group
-		r.Group(func(r chi.Router) {
-			mountPublicRoutes(r, services)
 		})
 	})
 
