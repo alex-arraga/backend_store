@@ -6,11 +6,8 @@ import (
 	"strings"
 
 	"github.com/alex-arraga/backend_store/pkg/auth"
+	"github.com/alex-arraga/backend_store/pkg/context_keys"
 )
-
-type contextKey string
-
-const UserIDKey contextKey = "user_id"
 
 func JWTAuthMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -35,7 +32,7 @@ func JWTAuthMiddleware(next http.Handler) http.Handler {
 		}
 
 		// Inyect user ID in the context
-		ctx := context.WithValue(r.Context(), UserIDKey, claims.UserID)
+		ctx := context.WithValue(r.Context(), context_keys.UserIDKey, claims.UserID)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }
