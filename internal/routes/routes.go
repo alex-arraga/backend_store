@@ -7,18 +7,33 @@ import (
 	"github.com/alex-arraga/backend_store/internal/services"
 )
 
+// Private or Protected routes
+func mountProtectedRoutes(r chi.Router, services *services.ServicesContainer) chi.Router {
+	r.Mount("/user", loadUserRoutes(services.UserSrv))
+	return r
+}
+
+// Public routes
+func mountPublicRoutes(r chi.Router, services *services.ServicesContainer) chi.Router {
+	r.Mount("/auth", loadAuthRoutes(services.AuthSrv))
+	return r
+}
+
 func MountRoutes(services *services.ServicesContainer) chi.Router {
 	r := chi.NewRouter()
 
-	v1Router := chi.NewRouter()
+	r.Route("/v1", func(r chi.Router) {
+		// Protected routes group
+		r.Group(func(r chi.Router) {
+			r.Use(middlewares.JWTAuthMiddleware)
+			mountProtectedRoutes(r, services)
+		})
 
-	// Use middlewares
-	v1Router.Use(middlewares.JWTAuthMiddleware)
+		// Public routes group
+		r.Group(func(r chi.Router) {
+			mountPublicRoutes(r, services)
+		})
+	})
 
-	// Mount routes
-	v1Router.Mount("/user", loadUserRoutes(services.UserSrv))
-	v1Router.Mount("/auth", loadAuthRoutes(services.AuthSrv))
-
-	r.Mount("/v1", v1Router)
 	return r
 }
