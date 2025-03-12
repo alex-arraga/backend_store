@@ -5,9 +5,10 @@ import (
 	"os"
 	"time"
 
-	"github.com/alex-arraga/backend_store/pkg/logger"
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/google/uuid"
+
+	"github.com/alex-arraga/backend_store/pkg/logger"
 )
 
 var jwtKey []byte
