@@ -43,7 +43,12 @@ func (repo *RepoConnection) UpdateUser(user *gorm_models.User) (*gorm_models.Use
 		return nil, result.Error
 	}
 
-	return user, nil
+	updatedUser, err := repo.GetUserByID(user.ID.String())
+	if err != nil {
+		return nil, err
+	}
+
+	return updatedUser, nil
 }
 
 func (repo *RepoConnection) DeleteUserByID(id string) error {
