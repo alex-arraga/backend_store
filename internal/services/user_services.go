@@ -104,8 +104,8 @@ func (s *userServiceImpl) UpdateUser(requestingUserID, targetUserID string, data
 	if dataToUpdate.Role != nil {
 		targetUser.Role = *dataToUpdate.Role
 	}
-	if dataToUpdate.Provider != "local" {
-		targetUser.Provider = dataToUpdate.Provider
+	if dataToUpdate.Provider != nil {
+		targetUser.Provider = *dataToUpdate.Provider
 	}
 	if dataToUpdate.Password != nil {
 		hashedPassword, err := hasher.HashPassword(*dataToUpdate.Password)
