@@ -62,7 +62,7 @@ func GetUserByIDHandler(w http.ResponseWriter, r *http.Request, us services.User
 // path /user/{targetUserID} - PUT
 func UpdateUserHandler(w http.ResponseWriter, r *http.Request, us services.UserService) {
 	type parameters struct {
-		Name      *string `json:"name,omitempty"`
+		FullName  *string `json:"fullname,omitempty"`
 		Email     *string `json:"email,omitempty"`
 		Password  *string `json:"password,omitempty"`
 		Role      *string `json:"role,omitempty"`
@@ -90,7 +90,7 @@ func UpdateUserHandler(w http.ResponseWriter, r *http.Request, us services.UserS
 	}
 
 	dataToUpdate := &models.UpdateUser{
-		FullName:  params.Name,
+		FullName:  params.FullName,
 		Email:     params.Email,
 		Password:  params.Password,
 		Role:      params.Role,
