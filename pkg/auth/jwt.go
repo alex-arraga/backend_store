@@ -5,6 +5,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/alex-arraga/backend_store/pkg/logger"
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/google/uuid"
 )
@@ -12,32 +13,27 @@ import (
 var jwtKey []byte
 
 type Claims struct {
-	UserID uuid.UUID
+	UserID string
 	Email  string
 	jwt.RegisteredClaims
 }
 
-func loadJWTKey() error {
+func LoadJWTKey() {
 	key := os.Getenv("JWT_KEY")
 	if key == "" {
-		return errors.New("couldn't get enviroment variable: JWT_KEY")
+		logger.UseLogger().Fatal().Msg("couldn't get enviroment variable: JWT_KEY")
 	}
 
 	// Converts string to []bytes
 	keyBytes := ([]byte)(key)
 
 	jwtKey = keyBytes
-	return nil
 }
 
 func GenerateJWT(userID uuid.UUID, email string) (string, error) {
-	if err := loadJWTKey(); err != nil {
-		return "", errors.New(err.Error())
-	}
-
 	expirationTime := time.Now().Add(168 * time.Hour) // 1 week
 	claims := &Claims{
-		UserID: userID,
+		UserID: userID.String(),
 		Email:  email,
 		RegisteredClaims: jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(expirationTime),
@@ -57,6 +53,11 @@ func ValidateJWT(tokenStr string) (*Claims, error) {
 
 	if err != nil || !token.Valid {
 		return nil, err
+	}
+
+	// Validate
+	if _, err := uuid.Parse(claims.UserID); err != nil {
+		return nil, errors.New("invalid UUID format in UserID")
 	}
 
 	return claims, nil

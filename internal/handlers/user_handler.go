@@ -30,7 +30,7 @@ func GetAllUsersHandler(w http.ResponseWriter, r *http.Request, us services.User
 	}
 
 	if user.Role != "admin" {
-		jsonutil.RespondError(w, http.StatusUnauthorized, "Unauthorize to get all users")
+		jsonutil.RespondError(w, http.StatusUnauthorized, "Unauthorize: You must be 'admin' to view all users")
 		return
 	}
 
