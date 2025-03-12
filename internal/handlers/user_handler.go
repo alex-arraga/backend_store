@@ -101,6 +101,7 @@ func UpdateUserHandler(w http.ResponseWriter, r *http.Request, us services.UserS
 	result, err := us.UpdateUser(requestingUserID, targetUserID, dataToUpdate)
 	if err != nil {
 		jsonutil.RespondError(w, http.StatusInternalServerError, fmt.Sprintf("Error updating user: %v", err))
+		return
 	}
 
 	userResponse := models.UserResponse{
