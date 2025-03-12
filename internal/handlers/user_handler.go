@@ -75,14 +75,6 @@ func UpdateUserHandler(w http.ResponseWriter, r *http.Request, us services.UserS
 		return
 	}
 
-	dataToUpdate := models.UpdateUser{
-		FullName:  params.Name,
-		Email:     params.Email,
-		Password:  params.Password,
-		Role:      params.Role,
-		AvatarURL: params.AvatarURL,
-	}
-
 	// Get UserID from request
 	targetUserID := chi.URLParam(r, "targetUserID")
 
@@ -93,8 +85,16 @@ func UpdateUserHandler(w http.ResponseWriter, r *http.Request, us services.UserS
 		return
 	}
 
+	dataToUpdate := &models.UpdateUser{
+		FullName:  params.Name,
+		Email:     params.Email,
+		Password:  params.Password,
+		Role:      params.Role,
+		AvatarURL: params.AvatarURL,
+	}
+
 	// Call service
-	result, err := us.UpdateUser(requestingUserID, targetUserID, &dataToUpdate)
+	result, err := us.UpdateUser(requestingUserID, targetUserID, dataToUpdate)
 	if err != nil {
 		jsonutil.RespondError(w, http.StatusInternalServerError, fmt.Sprintf("Error updating user: %v", err))
 	}
