@@ -75,7 +75,7 @@ func UpdateUserHandler(w http.ResponseWriter, r *http.Request, us services.UserS
 		return
 	}
 
-	userReq := models.UpdateUser{
+	dataToUpdate := models.UpdateUser{
 		FullName:  params.Name,
 		Email:     params.Email,
 		Password:  params.Password,
@@ -94,7 +94,7 @@ func UpdateUserHandler(w http.ResponseWriter, r *http.Request, us services.UserS
 	}
 
 	// Call service
-	result, err := us.UpdateUser(requestingUserID, targetUserID, &userReq)
+	result, err := us.UpdateUser(requestingUserID, targetUserID, &dataToUpdate)
 	if err != nil {
 		jsonutil.RespondError(w, http.StatusInternalServerError, fmt.Sprintf("Error updating user: %v", err))
 	}
