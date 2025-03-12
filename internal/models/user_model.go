@@ -15,12 +15,12 @@ type User struct {
 }
 
 type UpdateUser struct {
-	FullName   *string `json:"fullname,omitempty"`
-	Email      *string `json:"email,omitempty"`
-	Password   *string `json:"password,omitempty"`
-	Role       *string `json:"role,omitempty"`
-	Provider   string  `json:"provider"`
-	AvatarURL  *string `json:"avatar,omitempty"`
+	FullName  *string `json:"fullname,omitempty"`
+	Email     *string `json:"email,omitempty"`
+	Password  *string `json:"password,omitempty"`
+	Role      *string `json:"role,omitempty"`
+	Provider  string  `json:"provider"`
+	AvatarURL *string `json:"avatar,omitempty"`
 }
 
 // Models to output data
