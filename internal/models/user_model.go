@@ -32,3 +32,9 @@ type UserResponse struct {
 	Provider  string    `json:"provider"`
 	AvatarURL *string   `json:"avatar"`
 }
+
+// Check valid providers
+var ValidProviders = map[string]bool{
+	"local":  true,
+	"google": true,
+}
