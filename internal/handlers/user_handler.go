@@ -3,7 +3,6 @@ package handlers
 import (
 	"fmt"
 	"net/http"
-	"os"
 
 	"github.com/go-chi/chi/v5"
 
@@ -63,10 +62,11 @@ func GetUserByIDHandler(w http.ResponseWriter, r *http.Request, us services.User
 // path /user/{targetUserID} - PUT
 func UpdateUserHandler(w http.ResponseWriter, r *http.Request, us services.UserService) {
 	type parameters struct {
-		Name     *string `json:"name,omitempty"`
-		Email    *string `json:"email,omitempty"`
-		Password *string `json:"password,omitempty"`
-		Role     *string `json:"role,omitempty"`
+		Name      *string `json:"name,omitempty"`
+		Email     *string `json:"email,omitempty"`
+		Password  *string `json:"password,omitempty"`
+		Role      *string `json:"role,omitempty"`
+		AvatarURL *string `json:"avatar,omitempty"`
 	}
 
 	params, err := jsonutil.ParseRequestBody[parameters](r)
@@ -76,21 +76,22 @@ func UpdateUserHandler(w http.ResponseWriter, r *http.Request, us services.UserS
 	}
 
 	userReq := models.UpdateUser{
-		// Name:     params.Name,
-		Email: params.Email,
-		// Password: params.Password,
-		Role: params.Role,
+		FullName:  params.Name,
+		Email:     params.Email,
+		Password:  params.Password,
+		Role:      params.Role,
+		AvatarURL: params.AvatarURL,
 	}
 
-	// TODO: Get userID from context, auth middleware
-	// requestingUserID, ok := r.Context().Value(middlewares.UserIDKey).(string)
-	// if !ok || requestingUserID == "" {
-	// 	http.Error(w, "Unauthorized", http.StatusUnauthorized)
-	// 	return
-	// }
-
-	requestingUserID := os.Getenv("REQUESTING_USER")
+	// Get UserID from request
 	targetUserID := chi.URLParam(r, "targetUserID")
+
+	// Get UserID from context
+	requestingUserID, ok := r.Context().Value(context_keys.UserIDKey).(string)
+	if !ok || requestingUserID == "" {
+		jsonutil.RespondError(w, http.StatusUnauthorized, "Unauthorized: UserID in context not found")
+		return
+	}
 
 	// Call service
 	result, err := us.UpdateUser(requestingUserID, targetUserID, &userReq)
@@ -99,10 +100,11 @@ func UpdateUserHandler(w http.ResponseWriter, r *http.Request, us services.UserS
 	}
 
 	userResponse := models.UserResponse{
-		ID: result.ID,
-		// Name:  result.Name,
-		Email: result.Email,
-		Role:  result.Role,
+		ID:        result.ID,
+		FullName:  result.FullName,
+		Email:     result.Email,
+		Role:      result.Role,
+		AvatarURL: result.AvatarURL,
 	}
 
 	jsonutil.RespondJSON(w, http.StatusOK, "User updated successfully", userResponse)
