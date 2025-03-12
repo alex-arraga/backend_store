@@ -6,6 +6,7 @@ import (
 	// "github.com/alex-arraga/backend_store/internal/database/gorm_models"
 	"github.com/alex-arraga/backend_store/internal/models"
 	"github.com/alex-arraga/backend_store/internal/repositories"
+	"github.com/alex-arraga/backend_store/pkg/hasher"
 )
 
 // Implementation and initialization of user services that connect to the user repository
@@ -21,7 +22,7 @@ func newUserService(repo repositories.UserRepository) UserService {
 type UserService interface {
 	GetAllUsers() ([]models.UserResponse, error)
 	GetUserByID(id string) (*models.UserResponse, error)
-	UpdateUser(requestingUserID, targetUserID string, userReq *models.UpdateUser) (*models.UserResponse, error)
+	UpdateUser(requestingUserID, targetUserID string, dataToUpdate *models.UpdateUser) (*models.UserResponse, error)
 	DeleteUserByID(id string) error
 }
 
@@ -67,7 +68,7 @@ func (s *userServiceImpl) GetUserByID(id string) (*models.UserResponse, error) {
 	return userResponse, nil
 }
 
-func (s *userServiceImpl) UpdateUser(requestingUserID, targetUserID string, userReq *models.UpdateUser) (*models.UserResponse, error) {
+func (s *userServiceImpl) UpdateUser(requestingUserID, targetUserID string, dataToUpdate *models.UpdateUser) (*models.UserResponse, error) {
 	// Get the user that try set changes
 	requestingUser, err := s.repo.GetUserByID(requestingUserID)
 	if err != nil {
@@ -80,25 +81,31 @@ func (s *userServiceImpl) UpdateUser(requestingUserID, targetUserID string, user
 		return nil, fmt.Errorf("target user not found: %w", err)
 	}
 
-	// Validate if requesting user is admin, just an admin can set different roles
-	if userReq.Role != nil && requestingUser.Role != "admin" {
-		return nil, fmt.Errorf("you must be an administrator to change roles")
+	// Validate if requesting user wants to change his role for 'admin'
+	if dataToUpdate.Role != nil && *dataToUpdate.Role == "admin" && requestingUser.Role != "admin" {
+		return nil, fmt.Errorf("you must be an administrator to change to 'admin' role")
 	}
 
 	// Change just existing fields in the request
-	// if userReq.Name != nil {
-	// 	targetUser.FullName = *userReq.Name
-	// }
-	// if userReq.Email != nil {
-	// 	targetUser.Email = *userReq.Email
-	// }
-	// if userReq.Password != nil {
-	// 	hashedPassword, err := hasher.HashPassword(*userReq.Password)
-	// 	if err != nil {
-	// 		return nil, fmt.Errorf("failed hashing password: %w", err)
-	// 	}
-	// 	targetUser.PasswordHash = &hashedPassword
-	// }
+	if dataToUpdate.FullName != nil {
+		targetUser.FullName = *dataToUpdate.FullName
+	}
+	if dataToUpdate.Email != nil {
+		targetUser.Email = *dataToUpdate.Email
+	}
+	if dataToUpdate.Password != nil {
+		hashedPassword, err := hasher.HashPassword(*dataToUpdate.Password)
+		if err != nil {
+			return nil, fmt.Errorf("failed hashing password: %w", err)
+		}
+		targetUser.PasswordHash = &hashedPassword
+	}
+	if dataToUpdate.AvatarURL != nil {
+		targetUser.AvatarURL = dataToUpdate.AvatarURL
+	}
+	if dataToUpdate.Role != nil {
+		targetUser.Role = *dataToUpdate.Role
+	}
 
 	// Call repo and apply changes in db
 	updatedUser, err := s.repo.UpdateUser(targetUser)
@@ -106,14 +113,16 @@ func (s *userServiceImpl) UpdateUser(requestingUserID, targetUserID string, user
 		return nil, fmt.Errorf("failed to update user: %w", err)
 	}
 
-	u := models.UserResponse{
-		ID: updatedUser.ID,
-		// Name:  updatedUser.FullName,
-		Email: updatedUser.Email,
-		Role:  updatedUser.Role,
+	// Return a user response with the new data
+	userResp := &models.UserResponse{
+		ID:        updatedUser.ID,
+		FullName:  updatedUser.FullName,
+		Email:     updatedUser.Email,
+		Role:      updatedUser.Role,
+		AvatarURL: updatedUser.AvatarURL,
 	}
 
-	return &u, nil
+	return userResp, nil
 }
 
 func (s *userServiceImpl) DeleteUserByID(id string) error {

@@ -20,7 +20,6 @@ type UpdateUser struct {
 	Password   *string `json:"password,omitempty"`
 	Role       *string `json:"role,omitempty"`
 	Provider   string  `json:"provider"`
-	ProviderID *string `json:"provider_id,omitempty"`
 	AvatarURL  *string `json:"avatar,omitempty"`
 }
 
