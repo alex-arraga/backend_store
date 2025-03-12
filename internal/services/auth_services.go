@@ -25,18 +25,18 @@ func newAuthService(repo repositories.AuthRepository) AuthServices {
 
 // Methods of auth services
 type AuthServices interface {
-	RegisterWithEmailAndPassword(userReq *models.User) (*models.AuthResponse, error)
+	RegisterWithEmailAndPassword(userReq *models.User) (*models.UserResponse, error)
 	LoginWithEmailAndPassword(email, password string) (*models.AuthResponse, error)
 	LoginWithOAuth(user goth.User) (*models.UserResponse, error)
 }
 
 // * Local Auth services
 
-func (s *authServiceImpl) RegisterWithEmailAndPassword(userReq *models.User) (*models.AuthResponse, error) {
+func (s *authServiceImpl) RegisterWithEmailAndPassword(userReq *models.User) (*models.UserResponse, error) {
 	// Check if the user exist
 	existingUser, _ := s.repo.GetUserByEmail(userReq.Email)
 	if existingUser.ID != uuid.Nil {
-		return &models.AuthResponse{}, errors.New("user already exists")
+		return nil, errors.New("user already exists")
 	}
 
 	// Create a gorm.User model, the "Provider" field will be created as "local" by default, and "EmailVerified" as "false"
@@ -53,26 +53,17 @@ func (s *authServiceImpl) RegisterWithEmailAndPassword(userReq *models.User) (*m
 		return nil, fmt.Errorf("error registering user: %w", err)
 	}
 
-	// Generate JWT
-	token, err := auth.GenerateJWT(newUser.ID, newUser.Email)
-	if err != nil {
-		return &models.AuthResponse{}, err
-	}
-
 	// Generate client response
-	authResponse := &models.AuthResponse{
-		User: models.UserResponse{
-			ID:        newUser.ID,
-			FullName:  newUser.FullName,
-			Email:     newUser.Email,
-			Role:      newUser.Role,
-			Provider:  newUser.Provider,
-			AvatarURL: newUser.AvatarURL,
-		},
-		Token: token,
+	userResp := &models.UserResponse{
+		ID:        newUser.ID,
+		FullName:  newUser.FullName,
+		Email:     newUser.Email,
+		Role:      newUser.Role,
+		Provider:  newUser.Provider,
+		AvatarURL: newUser.AvatarURL,
 	}
 
-	return authResponse, nil
+	return userResp, nil
 }
 
 func (s *authServiceImpl) LoginWithEmailAndPassword(email, password string) (*models.AuthResponse, error) {
