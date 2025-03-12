@@ -1,6 +1,7 @@
 package services
 
 import (
+	"errors"
 	"fmt"
 
 	// "github.com/alex-arraga/backend_store/internal/database/gorm_models"
@@ -83,12 +84,12 @@ func (s *userServiceImpl) UpdateUser(requestingUserID, targetUserID string, data
 
 	// Validate if requesting user wants to change data of other users
 	if requestingUser.Role != "admin" && requestingUserID != targetUserID {
-		return nil, fmt.Errorf("you must be an administrator to change data of other user")
+		return nil, errors.New("you must be an administrator to change data of other user")
 	}
 
 	// Validate if requesting user wants to change his role for 'admin'
 	if dataToUpdate.Role != nil && *dataToUpdate.Role == "admin" && requestingUser.Role != "admin" {
-		return nil, fmt.Errorf("you must be an administrator to change to 'admin' role")
+		return nil, errors.New("you must be an administrator to change to 'admin' role")
 	}
 
 	// Change just existing fields in the request
@@ -103,9 +104,6 @@ func (s *userServiceImpl) UpdateUser(requestingUserID, targetUserID string, data
 	}
 	if dataToUpdate.Role != nil {
 		targetUser.Role = *dataToUpdate.Role
-	}
-	if dataToUpdate.Provider != nil {
-		targetUser.Provider = *dataToUpdate.Provider
 	}
 	if dataToUpdate.Password != nil {
 		hashedPassword, err := hasher.HashPassword(*dataToUpdate.Password)
