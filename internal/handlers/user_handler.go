@@ -77,6 +77,10 @@ func UpdateUserHandler(w http.ResponseWriter, r *http.Request, us services.UserS
 
 	// Get UserID from request
 	targetUserID := chi.URLParam(r, "targetUserID")
+	if targetUserID == "" {
+		jsonutil.RespondError(w, http.StatusBadRequest, "Target UserID is required")
+		return
+	}
 
 	// Get UserID from context
 	requestingUserID, ok := r.Context().Value(context_keys.UserIDKey).(string)
