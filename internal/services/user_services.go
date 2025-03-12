@@ -127,6 +127,7 @@ func (s *userServiceImpl) UpdateUser(requestingUserID, targetUserID string, data
 		FullName:  updatedUser.FullName,
 		Email:     updatedUser.Email,
 		Role:      updatedUser.Role,
+		Provider:  updatedUser.Provider,
 		AvatarURL: updatedUser.AvatarURL,
 	}
 

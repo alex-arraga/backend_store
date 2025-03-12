@@ -104,15 +104,7 @@ func UpdateUserHandler(w http.ResponseWriter, r *http.Request, us services.UserS
 		return
 	}
 
-	userResponse := models.UserResponse{
-		ID:        result.ID,
-		FullName:  result.FullName,
-		Email:     result.Email,
-		Role:      result.Role,
-		AvatarURL: result.AvatarURL,
-	}
-
-	jsonutil.RespondJSON(w, http.StatusOK, "User updated successfully", userResponse)
+	jsonutil.RespondJSON(w, http.StatusOK, "User updated successfully", result)
 }
 
 // path: /user/{userID} - DELETE
