@@ -4,11 +4,12 @@ import (
 	"errors"
 	"fmt"
 
+	"github.com/google/uuid"
+
 	// "github.com/alex-arraga/backend_store/internal/database/gorm_models"
 	"github.com/alex-arraga/backend_store/internal/models"
 	"github.com/alex-arraga/backend_store/internal/repositories"
 	"github.com/alex-arraga/backend_store/pkg/hasher"
-	"github.com/google/uuid"
 )
 
 // Implementation and initialization of user services that connect to the user repository
@@ -138,8 +139,13 @@ func (s *userServiceImpl) UpdateUser(requestingUserID, targetUserID string, data
 }
 
 func (s *userServiceImpl) DeleteUserByID(id string) error {
+	if _, err := uuid.Parse(id); err != nil {
+		return errors.New("invalid UUID format")
+	}
+
 	if err := s.repo.DeleteUserByID(id); err != nil {
 		return err
 	}
+
 	return nil
 }
