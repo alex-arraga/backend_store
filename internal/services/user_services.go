@@ -52,7 +52,7 @@ func (s *userServiceImpl) GetAllUsers() ([]models.UserResponse, error) {
 }
 
 func (s *userServiceImpl) FindUserByID(id string) (*models.UserResponse, error) {
-	user, err := s.repo.GetUserByID(id)
+	user, err := s.repo.FindUserByID(id)
 	if err != nil {
 		return nil, fmt.Errorf("couldn't get user: %w", err)
 	}
@@ -71,13 +71,13 @@ func (s *userServiceImpl) FindUserByID(id string) (*models.UserResponse, error) 
 
 func (s *userServiceImpl) UpdateUser(requestingUserID, targetUserID string, dataToUpdate *models.UpdateUser) (*models.UserResponse, error) {
 	// Get the user that try set changes
-	requestingUser, err := s.repo.GetUserByID(requestingUserID)
+	requestingUser, err := s.repo.FindUserByID(requestingUserID)
 	if err != nil {
 		return nil, fmt.Errorf("requesting user not found: %w", err)
 	}
 
 	// Check if the target user exist
-	targetUser, err := s.repo.GetUserByID(targetUserID)
+	targetUser, err := s.repo.FindUserByID(targetUserID)
 	if err != nil {
 		return nil, fmt.Errorf("target user not found: %w", err)
 	}

@@ -9,7 +9,7 @@ type ServicesContainer struct {
 
 func LoadServices(repo *repositories.RepositoryContainer) *ServicesContainer {
 	return &ServicesContainer{
-		AuthSrv: newAuthService(repo.AuthRepo),
+		AuthSrv: newAuthService(repo.UserRepo),
 		UserSrv: newUserService(repo.UserRepo),
 	}
 }

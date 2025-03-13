@@ -16,10 +16,10 @@ import (
 
 // Implementation and initialization of auth services that connect to the auth repository
 type authServiceImpl struct {
-	repo repositories.AuthRepository
+	repo repositories.UserRepository
 }
 
-func newAuthService(repo repositories.AuthRepository) AuthServices {
+func newAuthService(repo repositories.UserRepository) AuthServices {
 	return &authServiceImpl{repo: repo}
 }
 
