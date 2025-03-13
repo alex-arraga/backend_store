@@ -37,13 +37,18 @@ func RegisterUserWithEmailHandler(w http.ResponseWriter, r *http.Request, as ser
 		jsonutil.RespondError(w, http.StatusBadRequest, "FullName is required")
 		return
 	}
-	// TODO: Validate email format -> It must be foo@foo.com
 	if params.Email == "" {
 		jsonutil.RespondError(w, http.StatusBadRequest, "Email is required")
 		return
 	}
 	if params.Password == "" {
 		jsonutil.RespondError(w, http.StatusBadRequest, "Password is required")
+		return
+	}
+
+	// Validating if email format is valid
+	if isValid := utils.IsValidEmail(params.Email); !isValid {
+		jsonutil.RespondError(w, http.StatusBadRequest, "Invalid email format")
 		return
 	}
 
@@ -89,6 +94,12 @@ func LoginUserWithEmailHandler(w http.ResponseWriter, r *http.Request, as servic
 	}
 	if params.Password == "" {
 		jsonutil.RespondError(w, http.StatusBadRequest, "Password is required")
+		return
+	}
+
+	// Validating if email format is valid
+	if isValid := utils.IsValidEmail(params.Email); !isValid {
+		jsonutil.RespondError(w, http.StatusBadRequest, "Invalid email format")
 		return
 	}
 
