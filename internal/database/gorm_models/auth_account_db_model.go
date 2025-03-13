@@ -16,4 +16,6 @@ type AuthAccount struct {
 	PasswordHash  *string   `gorm:"size:255;default:null"`
 	CreatedAt     time.Time `gorm:"autoCreateTime"`
 	UpdatedAt     time.Time `gorm:"autoUpdateTime"`
+
+	User User `gorm:"foreignKey:UserID;constraint:OnDelete:CASCADE"`
 }
