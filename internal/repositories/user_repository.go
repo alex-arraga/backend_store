@@ -1,10 +1,10 @@
 package repositories
 
 import (
+	"github.com/google/uuid"
 	"gorm.io/gorm"
 
 	"github.com/alex-arraga/backend_store/internal/database/gorm_models"
-	"github.com/google/uuid"
 )
 
 type UserRepository interface {
