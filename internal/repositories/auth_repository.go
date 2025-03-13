@@ -9,9 +9,7 @@ import (
 
 type AuthRepository interface {
 	CreateUser(user *gorm_models.User) (*gorm_models.User, error)
-	GetUserByEmail(email string) (*gorm_models.User, error)
-	RegisterUserWithEmail(user *gorm_models.User) (*gorm_models.User, error)
-	LoginUserWithEmail(email, password string) (*gorm_models.User, error)
+	FindUserByEmail(email string) (*gorm_models.User, error)
 }
 
 func newAuthRepo(db *gorm.DB) AuthRepository {
@@ -26,7 +24,7 @@ func (repo *RepoConnection) CreateUser(user *gorm_models.User) (*gorm_models.Use
 	return user, nil
 }
 
-func (repo *RepoConnection) GetUserByEmail(email string) (*gorm_models.User, error) {
+func (repo *RepoConnection) FindUserByEmail(email string) (*gorm_models.User, error) {
 	var user gorm_models.User
 
 	err := repo.db.First(&user, "email = ?", email).Error
@@ -38,22 +36,4 @@ func (repo *RepoConnection) GetUserByEmail(email string) (*gorm_models.User, err
 	}
 
 	return &user, nil
-}
-
-func (repo *RepoConnection) RegisterUserWithEmail(user *gorm_models.User) (*gorm_models.User, error) {
-	newUser, err := repo.CreateUser(user)
-	if err != nil {
-		return nil, err
-	}
-
-	return newUser, nil
-}
-
-func (repo *RepoConnection) LoginUserWithEmail(email, password string) (*gorm_models.User, error) {
-	userDB, err := repo.GetUserByEmail(email)
-	if err != nil {
-		return nil, err
-	}
-
-	return userDB, nil
 }

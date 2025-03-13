@@ -34,7 +34,7 @@ type AuthServices interface {
 
 func (s *authServiceImpl) RegisterWithEmailAndPassword(userReq *models.User) (*models.UserResponse, error) {
 	// Check if the user exist
-	existingUser, _ := s.repo.GetUserByEmail(userReq.Email)
+	existingUser, _ := s.repo.FindUserByEmail(userReq.Email)
 	if existingUser.ID != uuid.Nil {
 		return nil, errors.New("user already exists")
 	}
@@ -48,7 +48,7 @@ func (s *authServiceImpl) RegisterWithEmailAndPassword(userReq *models.User) (*m
 	}
 
 	// Send data to repository
-	newUser, err := s.repo.RegisterUserWithEmail(u)
+	newUser, err := s.repo.CreateUser(u)
 	if err != nil {
 		return nil, fmt.Errorf("error registering user: %w", err)
 	}
@@ -67,7 +67,7 @@ func (s *authServiceImpl) RegisterWithEmailAndPassword(userReq *models.User) (*m
 }
 
 func (s *authServiceImpl) LoginWithEmailAndPassword(email, password string) (*models.AuthResponse, error) {
-	existingUser, err := s.repo.LoginUserWithEmail(email, password)
+	existingUser, err := s.repo.FindUserByEmail(email)
 	if err != nil {
 		return nil, fmt.Errorf("error logging in user: %w", err)
 	}
