@@ -8,6 +8,7 @@ import (
 	"github.com/alex-arraga/backend_store/internal/models"
 	"github.com/alex-arraga/backend_store/internal/repositories"
 	"github.com/alex-arraga/backend_store/pkg/hasher"
+	"github.com/google/uuid"
 )
 
 // Implementation and initialization of user services that connect to the user repository
@@ -52,6 +53,10 @@ func (s *userServiceImpl) GetAllUsers() ([]models.UserResponse, error) {
 }
 
 func (s *userServiceImpl) FindUserByID(id string) (*models.UserResponse, error) {
+	if _, err := uuid.Parse(id); err != nil {
+		return nil, errors.New("invalid UUID format")
+	}
+
 	user, err := s.repo.FindUserByID(id)
 	if err != nil {
 		return nil, fmt.Errorf("couldn't get user: %w", err)
