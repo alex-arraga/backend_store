@@ -10,6 +10,7 @@ import (
 type AuthRepository interface {
 	CreateUser(user *gorm_models.User) (*gorm_models.User, error)
 	FindUserByEmail(email string) (*gorm_models.User, error)
+	FindUserByID(id string) (*gorm_models.User, error)
 }
 
 func newAuthRepo(db *gorm.DB) AuthRepository {
@@ -35,5 +36,15 @@ func (repo *RepoConnection) FindUserByEmail(email string) (*gorm_models.User, er
 		return &gorm_models.User{}, err
 	}
 
+	return &user, nil
+}
+
+func (repo *RepoConnection) FindUserByID(id string) (*gorm_models.User, error) {
+	// TODO: Validate if id is an UUID
+	var user gorm_models.User
+
+	if result := repo.db.First(&user, "id = ?", id); result.Error != nil {
+		return nil, result.Error
+	}
 	return &user, nil
 }
