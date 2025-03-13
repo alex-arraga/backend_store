@@ -22,7 +22,7 @@ func newUserService(repo repositories.UserRepository) UserService {
 // Methods of user services
 type UserService interface {
 	GetAllUsers() ([]models.UserResponse, error)
-	GetUserByID(id string) (*models.UserResponse, error)
+	FindUserByID(id string) (*models.UserResponse, error)
 	UpdateUser(requestingUserID, targetUserID string, dataToUpdate *models.UpdateUser) (*models.UserResponse, error)
 	DeleteUserByID(id string) error
 }
@@ -51,7 +51,7 @@ func (s *userServiceImpl) GetAllUsers() ([]models.UserResponse, error) {
 	return allUsers, nil
 }
 
-func (s *userServiceImpl) GetUserByID(id string) (*models.UserResponse, error) {
+func (s *userServiceImpl) FindUserByID(id string) (*models.UserResponse, error) {
 	user, err := s.repo.GetUserByID(id)
 	if err != nil {
 		return nil, fmt.Errorf("couldn't get user: %w", err)

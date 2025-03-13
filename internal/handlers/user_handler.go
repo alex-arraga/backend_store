@@ -22,7 +22,7 @@ func GetAllUsersHandler(w http.ResponseWriter, r *http.Request, us services.User
 	}
 
 	// Get user from ID and validate if it's admin
-	user, err := us.GetUserByID(userID)
+	user, err := us.FindUserByID(userID)
 	if err != nil {
 		jsonutil.RespondError(w, http.StatusUnauthorized, err.Error())
 		return
@@ -50,7 +50,7 @@ func GetUserByIDHandler(w http.ResponseWriter, r *http.Request, us services.User
 		return
 	}
 
-	user, err := us.GetUserByID(userID)
+	user, err := us.FindUserByID(userID)
 	if err != nil {
 		jsonutil.RespondError(w, http.StatusBadRequest, fmt.Sprintf("User with id: %s not exist", userID))
 		return
